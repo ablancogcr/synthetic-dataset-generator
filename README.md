@@ -100,9 +100,21 @@ uv run ruff check .
 Generation is deterministic for analytical tables when configuration and seed are unchanged.
 `generated_at` and the corresponding run identifier intentionally reflect the actual run time.
 
+## License
+
+The Python source code and project documentation are available under the
+[MIT License](LICENSE).
+
+The bundled synthetic sample dataset is dedicated to the public domain under
+[CC0 1.0 Universal](data/sample_output/LICENSE-DATA). It may be copied, modified,
+redistributed, and used commercially without requesting permission.
+
+The project does not impose a license on datasets you generate yourself. You are
+responsible for choosing appropriate terms for your generated outputs and for any
+third-party material you add.
+
 ## Roadmap
 
 Stage 1 focuses on robust local CSV generation and validation. Possible later improvements include
 Parquet export, additional documented scenarios, and larger performance profiles. SQL analytics,
 BI, and machine learning will remain separate projects.
-
