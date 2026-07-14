@@ -1,0 +1,272 @@
+{
+  "overall_status": "passed",
+  "checks_passed": 53,
+  "checks_total": 53,
+  "checks": [
+    {
+      "name": "required_tables",
+      "passed": true,
+      "details": "Missing tables: []"
+    },
+    {
+      "name": "schema_customers",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_customers",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_sellers",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_sellers",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_products",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_products",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_orders",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_orders",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_order_items",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_order_items",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_payments",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_payments",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_shipping",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_shipping",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_reviews",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_reviews",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_calendar",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_calendar",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_simulation_metadata",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_simulation_metadata",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "schema_data_dictionary",
+      "passed": true,
+      "details": "Columns match the declared schema."
+    },
+    {
+      "name": "required_values_data_dictionary",
+      "passed": true,
+      "details": "Missing required values: 0"
+    },
+    {
+      "name": "required_files",
+      "passed": true,
+      "details": "Missing files: []"
+    },
+    {
+      "name": "unique_customers",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "unique_sellers",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "unique_products",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "unique_orders",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "unique_reviews",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "unique_calendar",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "unique_order_items",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "unique_payments",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "unique_shipping",
+      "passed": true,
+      "details": "Duplicate keys: 0"
+    },
+    {
+      "name": "fk_orders_customer_id",
+      "passed": true,
+      "details": "Invalid rows: 0"
+    },
+    {
+      "name": "fk_order_items_order_id",
+      "passed": true,
+      "details": "Invalid rows: 0"
+    },
+    {
+      "name": "fk_order_items_product_id",
+      "passed": true,
+      "details": "Invalid rows: 0"
+    },
+    {
+      "name": "fk_order_items_seller_id",
+      "passed": true,
+      "details": "Invalid rows: 0"
+    },
+    {
+      "name": "fk_payments_order_id",
+      "passed": true,
+      "details": "Invalid rows: 0"
+    },
+    {
+      "name": "fk_shipping_order_id",
+      "passed": true,
+      "details": "Invalid rows: 0"
+    },
+    {
+      "name": "fk_reviews_order_id",
+      "passed": true,
+      "details": "Invalid rows: 0"
+    },
+    {
+      "name": "valid_order_statuses",
+      "passed": true,
+      "details": "Allowed values only."
+    },
+    {
+      "name": "valid_payment_types",
+      "passed": true,
+      "details": "Allowed values only."
+    },
+    {
+      "name": "valid_review_scores",
+      "passed": true,
+      "details": "Scores are between 1 and 5."
+    },
+    {
+      "name": "valid_states",
+      "passed": true,
+      "details": "All geography uses recognized US state abbreviations."
+    },
+    {
+      "name": "non_negative_values",
+      "passed": true,
+      "details": "Prices and shipping values are non-negative."
+    },
+    {
+      "name": "date_sequence",
+      "passed": true,
+      "details": "Delivered-order timestamps are logically ordered."
+    },
+    {
+      "name": "configured_date_range",
+      "passed": true,
+      "details": "All business dates are within the configured period."
+    },
+    {
+      "name": "payment_reconciliation",
+      "passed": true,
+      "details": "Payments match order item totals to the cent."
+    },
+    {
+      "name": "shipping_coverage",
+      "passed": true,
+      "details": "Exactly one shipping row exists per order."
+    },
+    {
+      "name": "shipping_reconciliation",
+      "passed": true,
+      "details": "Order shipping equals item shipping."
+    },
+    {
+      "name": "reviews_for_delivered_orders",
+      "passed": true,
+      "details": "Reviews belong only to delivered orders."
+    },
+    {
+      "name": "scenario_populated",
+      "passed": true,
+      "details": "Scenario names are populated on scenario-bearing tables."
+    },
+    {
+      "name": "seller_churn_cutoff",
+      "passed": true,
+      "details": "Deactivated sellers receive no post-churn orders."
+    }
+  ]
+}

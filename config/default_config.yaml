@@ -1,0 +1,30 @@
+dataset:
+  name: "Synthetic Ecommerce Dataset"
+  domain: "ecommerce_marketplace"
+  country_context: "US-like synthetic marketplace"
+  start_date: "2024-01-01"
+  end_date: "2026-12-31"
+  number_of_orders: 50000
+  random_seed: 42
+
+output:
+  format: "csv"
+  create_zip: true
+  include_data_dictionary: true
+  include_validation_report: true
+
+simulation:
+  scenario: "baseline"
+  customer_count: 20000
+  seller_count: 1200
+  product_count: 8000
+  min_items_per_order: 1
+  max_items_per_order: 5
+  repeat_customer_rate: 0.18
+
+business_rules:
+  currency: "USD"
+  allow_cancelled_orders: true
+  allow_late_deliveries: true
+  allow_missing_reviews: true
+

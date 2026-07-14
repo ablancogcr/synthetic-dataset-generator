@@ -1,0 +1,52 @@
+baseline:
+  q4_multiplier: 1.25
+  november_multiplier: 1.10
+  december_multiplier: 1.15
+  shipping_cost_multiplier: 1.00
+  transit_days_multiplier: 1.00
+  delay_probability_multiplier: 1.00
+  review_score_shift: 0.00
+  category_multipliers: {}
+  seller_churn_fraction: 0.00
+  seller_churn_at_fraction: 0.60
+
+holiday_spike:
+  q4_multiplier: 1.55
+  november_multiplier: 1.35
+  december_multiplier: 1.45
+  shipping_cost_multiplier: 1.10
+  transit_days_multiplier: 1.12
+  delay_probability_multiplier: 1.55
+  review_score_shift: -0.25
+  category_multipliers:
+    "Electronics & Accessories": 1.35
+    "Toys & Games": 1.45
+    "Watches & Gifts": 1.40
+    "Home Goods": 1.25
+  seller_churn_fraction: 0.00
+  seller_churn_at_fraction: 0.60
+
+logistics_improvement:
+  q4_multiplier: 1.25
+  november_multiplier: 1.10
+  december_multiplier: 1.15
+  shipping_cost_multiplier: 0.95
+  transit_days_multiplier: 0.76
+  delay_probability_multiplier: 0.42
+  review_score_shift: 0.35
+  category_multipliers: {}
+  seller_churn_fraction: 0.00
+  seller_churn_at_fraction: 0.60
+
+seller_churn:
+  q4_multiplier: 1.25
+  november_multiplier: 1.10
+  december_multiplier: 1.15
+  shipping_cost_multiplier: 1.00
+  transit_days_multiplier: 1.00
+  delay_probability_multiplier: 1.00
+  review_score_shift: 0.00
+  category_multipliers: {}
+  seller_churn_fraction: 0.05
+  seller_churn_at_fraction: 0.60
+

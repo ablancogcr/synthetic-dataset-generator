@@ -1,0 +1,114 @@
+table_name,column_name,data_type,description,example_value,nullable
+customers,customer_id,string,Synthetic customer record identifier.,customer_000001,False
+customers,customer_unique_id,string,Stable synthetic customer identity.,customer_unique_000001,False
+customers,customer_state,string,US state abbreviation.,WA,False
+customers,customer_city,string,City consistent with the assigned state.,Seattle,False
+customers,customer_region,string,US census-style region.,West,False
+customers,customer_zip_prefix,string,Synthetic five-digit ZIP prefix.,64634,False
+customers,customer_segment,string,Behavioral customer segment.,one_time_buyer,False
+customers,customer_lifecycle_stage,string,Customer lifecycle stage.,returning,False
+customers,created_at,date,Synthetic customer creation date.,2024-01-01 00:00:00,False
+sellers,seller_id,string,Synthetic seller identifier.,seller_000001,False
+sellers,seller_state,string,Seller state abbreviation.,AL,False
+sellers,seller_city,string,Seller city.,Montgomery,False
+sellers,seller_region,string,Seller region.,South,False
+sellers,seller_zip_prefix,string,Synthetic seller ZIP prefix.,90585,False
+sellers,seller_segment,string,Seller operating segment.,high_volume,False
+sellers,seller_quality_score,float,Synthetic seller quality score from 0 to 1.,0.9031,False
+sellers,seller_fulfillment_capacity,float,Relative fulfillment capacity from 0 to 1.,0.2505,False
+sellers,seller_active_flag,boolean,Whether the seller is active at period end.,True,False
+sellers,created_at,date,Synthetic seller creation date.,2024-01-01 00:00:00,False
+sellers,deactivated_at,date,Seller deactivation date in churn scenario.,,True
+products,product_id,string,Synthetic product identifier.,product_000001,False
+products,product_category,string,Generic English product category.,Mobile & Telecom,False
+products,product_name,string,Generic non-branded product name.,Mobile Accessory 0001,False
+products,product_weight_g,integer,Product weight in grams.,1290,False
+products,product_length_cm,float,Product length in centimeters.,6.4,False
+products,product_height_cm,float,Product height in centimeters.,3.9,False
+products,product_width_cm,float,Product width in centimeters.,5.4,False
+products,product_price_base_usd,float,Base synthetic product price in USD.,215.06,False
+products,created_at,date,Synthetic product creation date.,2024-01-01 00:00:00,False
+orders,order_id,string,Synthetic order identifier.,order_0000001,False
+orders,customer_id,string,Customer placing the order.,customer_000875,False
+orders,order_status,string,Order fulfillment status.,delivered,False
+orders,order_purchase_timestamp,datetime,Order purchase timestamp.,2025-07-30 16:10:36,False
+orders,order_approved_at,datetime,Payment approval timestamp.,2025-07-31 07:10:36,True
+orders,order_estimated_delivery_date,date,Estimated delivery date.,2025-08-06 00:00:00,False
+orders,order_delivered_carrier_date,datetime,Carrier handoff timestamp.,2025-08-02 07:10:36,True
+orders,order_delivered_customer_date,datetime,Customer delivery timestamp.,2025-08-07 02:10:36,True
+orders,order_year,integer,Purchase year.,2025,False
+orders,order_quarter,integer,Purchase quarter.,3,False
+orders,order_month,integer,Purchase month.,7,False
+orders,order_week,integer,ISO purchase week.,31,False
+orders,order_day_of_week,integer,Purchase weekday where Monday is 0.,2,False
+orders,is_weekend,boolean,Whether purchase occurred on a weekend.,False,False
+orders,is_holiday_period,boolean,Whether purchase occurred in holiday season.,False,False
+orders,is_promotion_period,boolean,Whether purchase occurred in a promotion window.,False,False
+orders,scenario_name,string,Scenario used for this order.,baseline,False
+order_items,order_id,string,Parent order identifier.,order_0000001,False
+order_items,order_item_id,integer,One-based item sequence within order.,1,False
+order_items,product_id,string,Purchased product identifier.,product_003830,False
+order_items,seller_id,string,Seller fulfilling the order.,seller_000050,False
+order_items,item_price_usd,float,Synthetic item price in USD.,46.65,False
+order_items,shipping_cost_usd,float,Allocated item shipping cost in USD.,5.51,False
+order_items,item_total_usd,float,Item price plus shipping cost in USD.,52.16,False
+order_items,scenario_name,string,Scenario used for this item.,baseline,False
+payments,order_id,string,Paid order identifier.,order_0000001,False
+payments,payment_sequential,integer,One-based payment sequence.,1,False
+payments,payment_type,string,Synthetic payment method.,credit_card,False
+payments,payment_installments,integer,Installment count.,1,False
+payments,payment_value_usd,float,Payment value in USD.,134.11,False
+payments,scenario_name,string,Scenario used for this payment.,baseline,False
+shipping,order_id,string,Shipped order identifier.,order_0000001,False
+shipping,seller_state,string,Origin state.,NY,False
+shipping,customer_state,string,Destination state.,PA,False
+shipping,seller_region,string,Origin region.,Northeast,False
+shipping,customer_region,string,Destination region.,Northeast,False
+shipping,shipping_distance_band,string,"Same-state, same-region, cross-region, or remote band.",same_region,False
+shipping,shipping_zone,string,Synthetic route zone.,zone_2,False
+shipping,estimated_delivery_days,integer,Estimated delivery days.,7,False
+shipping,actual_delivery_days,integer,Actual delivery days.,7.0,True
+shipping,delivery_delay_days,integer,Days delivered after estimate.,0.0,True
+shipping,late_delivery_flag,boolean,Whether delivery missed its estimate.,False,False
+shipping,shipping_cost_usd,float,Order shipping cost in USD.,12.78,False
+shipping,scenario_name,string,Scenario used for shipping.,baseline,False
+reviews,review_id,string,Synthetic review identifier.,review_0000001,False
+reviews,order_id,string,Reviewed delivered order.,order_0000002,False
+reviews,review_score,integer,Review score from 1 to 5.,5,False
+reviews,review_creation_date,date,Review creation date.,2025-09-19 00:00:00,False
+reviews,review_answer_timestamp,datetime,Synthetic response timestamp.,2025-09-21 20:00:00,False
+reviews,review_sentiment_label,string,"Negative, neutral, or positive sentiment.",positive,False
+reviews,satisfaction_risk_flag,boolean,Whether score is 1 or 2.,False,False
+reviews,scenario_name,string,Scenario used for the review.,baseline,False
+calendar,date,date,Calendar date.,2024-01-01 00:00:00,False
+calendar,year,integer,Calendar year.,2024,False
+calendar,quarter,integer,Calendar quarter.,1,False
+calendar,month,integer,Month number.,1,False
+calendar,month_name,string,Month name.,January,False
+calendar,week,integer,ISO week.,1,False
+calendar,day_of_week,integer,Weekday where Monday is 0.,0,False
+calendar,day_name,string,Weekday name.,Monday,False
+calendar,is_weekend,boolean,Weekend flag.,False,False
+calendar,is_holiday_period,boolean,Holiday-season flag.,False,False
+calendar,is_promotion_period,boolean,Promotion-window flag.,False,False
+calendar,season,string,Meteorological season.,winter,False
+simulation_metadata,simulation_run_id,string,Unique synthetic simulation run identifier.,simulation_run_20260714_220702_baseline_seed42,False
+simulation_metadata,dataset_name,string,Configured dataset name.,Synthetic Ecommerce Dataset,False
+simulation_metadata,domain,string,Dataset domain.,ecommerce_marketplace,False
+simulation_metadata,scenario_name,string,Applied scenario.,baseline,False
+simulation_metadata,random_seed,integer,Root random seed.,42,False
+simulation_metadata,generated_at,datetime,UTC generation timestamp.,2026-07-14 22:07:02+00:00,False
+simulation_metadata,start_date,date,Configured period start.,2024-01-01,False
+simulation_metadata,end_date,date,Configured period end.,2026-12-31,False
+simulation_metadata,number_of_orders,integer,Generated order count.,10000,False
+simulation_metadata,number_of_customers,integer,Generated customer count.,20000,False
+simulation_metadata,number_of_sellers,integer,Generated seller count.,1200,False
+simulation_metadata,number_of_products,integer,Generated product count.,8000,False
+simulation_metadata,currency,string,Synthetic monetary unit.,USD,False
+simulation_metadata,disclaimer,string,Synthetic-data usage disclaimer.,"Fully synthetic data for education, analytics practice, portfolio projects, SQL modeling, dashboard development, and machine learning experiments. It contains no real customers, sellers, orders, companies, or performance and must not be used as real market data or for operational decisions.",False
+data_dictionary,table_name,string,Dataset table.,,False
+data_dictionary,column_name,string,Column in the table.,,False
+data_dictionary,data_type,string,Logical data type.,,False
+data_dictionary,description,string,Human-readable field definition.,,False
+data_dictionary,example_value,string,Example generated value.,,True
+data_dictionary,nullable,boolean,Whether blank values are allowed.,,False
