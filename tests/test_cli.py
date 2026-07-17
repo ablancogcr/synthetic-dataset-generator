@@ -4,8 +4,41 @@ from collections.abc import Callable
 
 import yaml
 
-from synthetic_dataset_generator.cli import main
+from synthetic_dataset_generator.cli import build_parser, main, request_from_args
 from synthetic_dataset_generator.config import GeneratorConfig
+
+
+def test_cli_options_map_to_shared_generation_request() -> None:
+    args = build_parser().parse_args(
+        [
+            "generate",
+            "--config",
+            "custom-config.yaml",
+            "--scenarios",
+            "custom-scenarios.yaml",
+            "--output",
+            "custom-output",
+            "--scenario",
+            "seller_churn",
+            "--orders",
+            "321",
+            "--seed",
+            "7",
+            "--dirty",
+            "--overwrite",
+        ]
+    )
+
+    request = request_from_args(args)
+
+    assert str(request.config_path) == "custom-config.yaml"
+    assert str(request.scenarios_path) == "custom-scenarios.yaml"
+    assert str(request.output_root) == "custom-output"
+    assert request.scenario == "seller_churn"
+    assert request.orders == 321
+    assert request.seed == 7
+    assert request.dirty is True
+    assert request.overwrite is True
 
 
 def test_cli_exports_zip_and_handles_collision(

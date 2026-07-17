@@ -1,4 +1,4 @@
-"""Entry point for the local synthetic ecommerce dataset viewer."""
+"""Entry point for the local synthetic ecommerce dataset app."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ from streamlit_app.utils.streamlit_cache import (  # noqa: E402
 )
 
 st.set_page_config(
-    page_title="Synthetic dataset viewer",
+    page_title="Synthetic dataset generator",
     page_icon=":material/table_view:",
     layout="wide",
 )
@@ -41,6 +41,11 @@ discovery = discover_datasets(DEFAULT_OUTPUT_ROOT)
 dataset_by_path: dict[str, DatasetDirectory] = {
     str(dataset.path): dataset for dataset in discovery.datasets
 }
+generated_dataset_value = st.session_state.get("generated_dataset_path")
+if generated_dataset_value:
+    generated_dataset = inspect_dataset_directory(generated_dataset_value)
+    if generated_dataset is not None and generated_dataset.is_valid:
+        dataset_by_path[str(generated_dataset.path)] = generated_dataset
 
 with st.sidebar:
     st.header("Dataset")
@@ -65,6 +70,9 @@ with st.sidebar:
             dataset_by_path[str(custom_dataset.path)] = custom_dataset
 
     options = sorted(dataset_by_path, key=lambda value: Path(value).name.lower())
+    pending_selection = st.session_state.pop("pending_dataset_selection", None)
+    if pending_selection in options:
+        st.session_state["selected_dataset_path"] = pending_selection
     current = st.session_state.get("selected_dataset_path")
     if current not in options:
         st.session_state["selected_dataset_path"] = options[0] if options else None
@@ -118,6 +126,7 @@ with st.sidebar:
     st.link_button("View source repository", GITHUB_URL, icon=":material/code:")
 
 pages = [
+    st.Page("app_pages/generate.py", title="Generate dataset", icon=":material/add_box:"),
     st.Page("app_pages/overview.py", title="Overview", icon=":material/dashboard:"),
     st.Page("app_pages/data_explorer.py", title="Data explorer", icon=":material/table_view:"),
     st.Page(

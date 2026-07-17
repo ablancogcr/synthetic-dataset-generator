@@ -8,9 +8,7 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from synthetic_dataset_generator.config import apply_overrides, load_config, load_scenarios
-from synthetic_dataset_generator.exporters import export_dataset
-from synthetic_dataset_generator.generator import DatasetGenerator
+from synthetic_dataset_generator.workflow import GenerationRequest, run_generation
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -45,47 +43,22 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def run_generate(args: argparse.Namespace) -> int:
-    print("Synthetic Dataset Generator")
-    print("Starting dataset generation...")
-    print(f"  Config: {Path(args.config)}")
-    print(f"  Scenarios: {Path(args.scenarios)}")
-    print("Loading and validating configuration...")
-    config = apply_overrides(
-        load_config(Path(args.config)),
+def request_from_args(args: argparse.Namespace) -> GenerationRequest:
+    """Map parsed CLI arguments to the shared generation request."""
+    return GenerationRequest(
+        config_path=Path(args.config),
+        scenarios_path=Path(args.scenarios),
+        output_root=Path(args.output),
         scenario=args.scenario,
         orders=args.orders,
         seed=args.seed,
         dirty=args.dirty,
-    )
-    scenarios = load_scenarios(Path(args.scenarios))
-    scenario = scenarios[config.simulation.scenario]
-    print("Configuration ready:")
-    print(f"  Scenario: {config.simulation.scenario}")
-    print(f"  Orders: {config.dataset.number_of_orders:,}")
-    print(f"  Date range: {config.dataset.start_date} to {config.dataset.end_date}")
-    print(f"  Random seed: {config.dataset.random_seed}")
-    print(f"  Data quality mode: {config.data_quality.mode}")
-    print(f"  Output root: {Path(args.output)}")
-    print("Generating dataset tables...")
-
-    def report(message: str) -> None:
-        print(f"  {message}")
-
-    dataset = DatasetGenerator(config, scenario, progress=report).generate()
-    print("Creating dataset files...")
-    result = export_dataset(
-        dataset,
-        Path(args.output),
         overwrite=args.overwrite,
-        progress=report,
     )
-    print("Generation complete.")
-    print(f"  Dataset folder: {result.output_dir}")
-    if result.zip_path is not None:
-        print(f"  ZIP package: {result.zip_path}")
-    print(f"  Validation: {result.validation.overall_status.upper()}")
-    return 0 if result.validation.passed else 1
+
+
+def run_generate(args: argparse.Namespace) -> int:
+    return run_generation(request_from_args(args), progress=print).exit_code
 
 
 def main(argv: list[str] | None = None) -> int:

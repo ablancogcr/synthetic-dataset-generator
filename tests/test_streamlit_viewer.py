@@ -4,6 +4,7 @@ import json
 
 import pandas as pd
 import pytest
+from streamlit.testing.v1 import AppTest
 
 from streamlit_app.utils.data_loader import (
     DataLoadError,
@@ -27,6 +28,25 @@ from streamlit_app.utils.validation_loader import load_validation_report
 
 def _write_csv(directory, table_name: str, content: str = "id\n1\n") -> None:
     (directory / f"{table_name}.csv").write_text(content, encoding="utf-8")
+
+
+def test_generate_page_exposes_the_cli_options_only():
+    app = AppTest.from_file("streamlit_app/app_pages/generate.py")
+    app.run()
+
+    assert not app.exception
+    assert [item.label for item in app.text_input] == [
+        "Config YAML path",
+        "Output directory",
+        "Scenarios YAML path",
+    ]
+    assert [item.label for item in app.number_input] == ["Order count", "Random seed"]
+    assert [item.label for item in app.checkbox] == [
+        "Enable dirty-data mode",
+        "Overwrite an existing matching package",
+    ]
+    assert [item.label for item in app.selectbox] == ["Scenario"]
+    assert [item.label for item in app.button] == ["Generate dataset"]
 
 
 def test_dataset_discovery_separates_valid_and_incomplete_directories(tmp_path):

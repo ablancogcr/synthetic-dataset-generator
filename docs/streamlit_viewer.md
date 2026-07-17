@@ -1,8 +1,9 @@
-# Local Streamlit Data Viewer
+# Local Streamlit Dataset App
 
-The Streamlit viewer is a local utility for inspecting CSV packages already produced by the
-Synthetic Dataset Generator CLI. It does not replace generation, write back to datasets, use a
-database, upload files, or include deployment configuration.
+The Streamlit app is a local utility for generating and inspecting Synthetic Dataset Generator CSV
+packages. Its Generate dataset page uses the same Python workflow as the CLI. Analytical pages do
+not write back to generated datasets, use a database, upload files, or include deployment
+configuration.
 
 ## Run locally
 
@@ -12,7 +13,7 @@ Install the optional viewer and development dependencies:
 uv sync --extra dev --extra viewer
 ```
 
-Generate a dataset with the existing CLI, then start the viewer from the repository root:
+Start the app from the repository root:
 
 ```bash
 uv run streamlit run streamlit_app/app.py
@@ -22,12 +23,35 @@ The default discovery root is `data/output/`. The sidebar also accepts the exact
 local generated dataset folder. That folder is inspected directly; the viewer does not recursively
 search unrelated filesystem locations.
 
+## Generation
+
+Generate dataset exposes only the current CLI command options:
+
+- Config YAML path (`--config`)
+- Scenarios YAML path (`--scenarios`)
+- Output directory (`--output`)
+- Scenario (`--scenario`)
+- Order count (`--orders`)
+- Random seed (`--seed`)
+- Dirty-data mode (`--dirty`)
+- Overwrite (`--overwrite`)
+
+The form defaults to the documented CLI values. It does not edit or persist YAML values such as
+entity counts, date ranges, business rules, or dirty-data rates. The shared generation workflow
+emits the CLI progress and validation messages into the page, creates the same folder and ZIP
+package, and makes the ZIP available for download when one exists.
+
+Packages written outside `data/output/` are retained as the app's generated dataset selection for
+the browser session. The sidebar can still be used to choose another local package or enter a
+different exact folder manually.
+
 ## Architecture
 
 `streamlit_app/app.py` configures navigation, discovers datasets, and owns shared selection state.
-Direct page scripts live in `streamlit_app/app_pages/`. Reusable filesystem, loading, calculation,
-validation, and chart logic lives in `streamlit_app/utils/` so it can be tested without browser UI
-automation.
+Direct page scripts live in `streamlit_app/app_pages/`. The CLI and Generate dataset page share the
+generation workflow in `synthetic_dataset_generator.workflow`, while reusable filesystem, loading,
+calculation, validation, and chart logic lives in `streamlit_app/utils/` so it can be tested without
+browser UI automation.
 
 CSV loading uses `st.cache_data` with the resolved file path and nanosecond modification time as
 cache inputs. Regenerating a file therefore creates a fresh cache entry. Reusable aggregations and
@@ -53,6 +77,8 @@ metadata exists.
 
 ## Pages
 
+- **Generate dataset** runs the CLI-equivalent local generator, shows its progress and validation
+  output, and downloads the generated ZIP package.
 - **Overview** shows entity counts, revenue KPIs, delivery/review KPIs, monthly trends, and order
   statuses.
 - **Data explorer** previews any available CSV, shows columns and pandas data types, applies a

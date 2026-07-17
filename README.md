@@ -97,11 +97,11 @@ clean source passes and all configured defects survive CSV serialization; their 
 is `expected_issues`. Unexpected generator or audit failures retain the folder for diagnosis, omit
 the ZIP, and return a nonzero exit code.
 
-## Local Streamlit Data Viewer
+## Local Streamlit Dataset App
 
-The optional Streamlit viewer explores datasets that the CLI has already generated. It is a
-local-only project utility: it does not generate data, upload files, connect to a database, or add
-anything to a public website.
+The optional Streamlit app can generate datasets with the same options and output as the CLI, then
+explore those local packages. It is a local-only project utility: it does not upload files, connect
+to a database, or add anything to a public website.
 
 Install the viewer dependencies alongside the development tools:
 
@@ -109,22 +109,26 @@ Install the viewer dependencies alongside the development tools:
 uv sync --extra dev --extra viewer
 ```
 
-Generate a dataset first using the normal CLI command above. Generated dataset folders are detected
-under `data/output/` when they contain at least `orders.csv`, `order_items.csv`, `customers.csv`,
-`products.csv`, and `seller_products.csv`. Then launch the viewer from the repository root:
+Launch the app from the repository root:
 
 ```bash
 uv run streamlit run streamlit_app/app.py
 ```
 
-The app provides overview KPIs and monthly trends, a table explorer with CSV downloads, marketplace
-analysis, shipping and review relationship views, generator validation results, and a schema/data
-dictionary reference. An exact alternative local dataset folder can also be entered in the sidebar.
-Missing optional files produce page-level messages rather than stopping the whole app.
+The **Generate dataset** page exposes the same command options as the CLI: config YAML path,
+scenarios YAML path, output directory, scenario, order count, random seed, dirty-data mode, and
+overwrite. It saves the same dataset folder and ZIP package, streams the generation and validation
+messages, and offers a ZIP download. The generated package is selected automatically for the
+viewer, including when it was written outside `data/output/`.
 
-The viewer is not required for dataset generation. `uv sync --extra dev` and the existing CLI flow
+The remaining pages provide overview KPIs and monthly trends, a table explorer with CSV downloads,
+marketplace analysis, shipping and review relationship views, generator validation results, and a
+schema/data dictionary reference. An exact alternative local dataset folder can also be entered in
+the sidebar. Missing optional files produce page-level messages rather than stopping the whole app.
+
+The app is not required for dataset generation. `uv sync --extra dev` and the existing CLI flow
 continue to work without the optional `viewer` extra. See
-[the local viewer guide](docs/streamlit_viewer.md) for architecture and metric definitions.
+[the local Streamlit guide](docs/streamlit_viewer.md) for architecture and metric definitions.
 
 ## Scenarios
 

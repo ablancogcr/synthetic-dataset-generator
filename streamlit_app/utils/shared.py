@@ -14,7 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "data" / "output"
 GITHUB_URL = "https://github.com/ablancogcr/synthetic-dataset-generator"
 SYNTHETIC_DISCLAIMER = (
-    "This viewer displays fully synthetic data. It contains no real customers, sellers, "
+    "This app works only with fully synthetic data. It contains no real customers, sellers, "
     "orders, companies, or performance and must not be used as real market data or for "
     "operational decisions."
 )
