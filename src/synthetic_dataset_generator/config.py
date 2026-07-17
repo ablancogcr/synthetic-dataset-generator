@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import math
 from datetime import date
 from pathlib import Path
 from typing import Literal
 
 import yaml
 from pydantic import BaseModel, Field, model_validator
+
+from synthetic_dataset_generator.random import rng_for
 
 ScenarioName = Literal["baseline", "holiday_spike", "logistics_improvement", "seller_churn"]
 DataQualityMode = Literal["clean", "dirty"]
@@ -38,7 +41,9 @@ class OutputConfig(BaseModel):
 
 class SimulationConfig(BaseModel):
     scenario: ScenarioName = "baseline"
-    customer_count: int = Field(default=20_000, gt=0)
+    customer_count: int | None = Field(default=None, gt=0)
+    customer_to_order_ratio: float = Field(default=0.40, gt=0, le=1)
+    customer_to_order_ratio_variation: float = Field(default=0.05, ge=0, le=1)
     seller_count: int = Field(default=1_200, gt=0)
     product_count: int = Field(default=8_000, gt=0)
     min_sellers_per_product: int = Field(default=1, gt=0)
@@ -87,6 +92,22 @@ class GeneratorConfig(BaseModel):
     simulation: SimulationConfig = Field(default_factory=SimulationConfig)
     business_rules: BusinessRulesConfig = Field(default_factory=BusinessRulesConfig)
     data_quality: DataQualityConfig = Field(default_factory=DataQualityConfig)
+
+    @property
+    def resolved_customer_count(self) -> int:
+        """Return the configured count or a seed-determined proportional population."""
+        explicit_count = self.simulation.customer_count
+        if explicit_count is not None:
+            return explicit_count
+        ratio = self.simulation.customer_to_order_ratio
+        variation = self.simulation.customer_to_order_ratio_variation
+        sampled_ratio = rng_for(self.dataset.random_seed, "customer_population").uniform(
+            max(0.0, ratio - variation), min(1.0, ratio + variation)
+        )
+        return max(
+            1,
+            math.ceil(self.dataset.number_of_orders * sampled_ratio),
+        )
 
 
 class ScenarioConfig(BaseModel):

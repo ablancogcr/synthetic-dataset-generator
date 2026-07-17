@@ -140,6 +140,14 @@ continue to work without the optional `viewer` extra. See
 Scenario parameters are visible in `config/scenarios.yaml`. The general dataset shape is controlled
 by `config/default_config.yaml`, and CLI options override scenario, order count, and seed.
 
+Customer population scales with the requested order count by default. The base
+`simulation.customer_to_order_ratio` is `0.40`, with a seed-determined
+`customer_to_order_ratio_variation` of `0.05`; datasets therefore create 35% through 45% as many
+customers as orders. This allows customers to place multiple orders while varying the population
+between runs. The same configuration and seed always select the same customer count. Set an optional
+positive `simulation.customer_count` in a custom YAML file when a fixed customer population is
+required; it takes precedence over the ratio and variation.
+
 Catalog breadth is controlled by `simulation.min_sellers_per_product` and
 `simulation.max_sellers_per_product`, defaulting to one through four sellers per product. Every
 product and seller receives at least one listing; invalid combinations that cannot provide complete

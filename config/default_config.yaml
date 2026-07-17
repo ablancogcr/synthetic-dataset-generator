@@ -15,7 +15,8 @@ output:
 
 simulation:
   scenario: "baseline"
-  customer_count: 20000
+  customer_to_order_ratio: 0.40
+  customer_to_order_ratio_variation: 0.05
   seller_count: 1200
   product_count: 8000
   min_sellers_per_product: 1

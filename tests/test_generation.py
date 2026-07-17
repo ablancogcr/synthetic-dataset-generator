@@ -32,7 +32,7 @@ def test_generation_produces_declared_tables(
 def test_fixed_seed_reproduces_analytical_tables(
     config_factory: Callable[..., GeneratorConfig], scenarios: dict[str, ScenarioConfig]
 ) -> None:
-    config = config_factory(orders=120, seed=13)
+    config = config_factory(orders=120, seed=13, customer_count=None)
     first = DatasetGenerator(config, scenarios["baseline"]).generate()
     second = DatasetGenerator(config, scenarios["baseline"]).generate()
     for table in (
@@ -48,3 +48,16 @@ def test_fixed_seed_reproduces_analytical_tables(
         "calendar",
     ):
         pd.testing.assert_frame_equal(first.tables[table], second.tables[table])
+
+
+def test_derived_customer_population_is_smaller_than_order_volume(
+    config_factory: Callable[..., GeneratorConfig], scenarios: dict[str, ScenarioConfig]
+) -> None:
+    config = config_factory(orders=10, customer_count=None)
+    dataset = DatasetGenerator(config, scenarios["baseline"]).generate()
+    customers = dataset.tables["customers"]
+    order_customers = dataset.tables["orders"]["customer_id"]
+
+    assert 4 <= len(customers) <= 5
+    assert order_customers.isin(customers["customer_id"]).all()
+    assert order_customers.duplicated().any()

@@ -53,7 +53,7 @@ class DatasetGenerator:
         self._report(f"Generated calendar ({len(calendar):,} rows).")
         self._report("Generating customers...")
         customers, customer_weights = generate_customers(
-            config.simulation.customer_count,
+            config.resolved_customer_count,
             config.dataset.start_date,
             config.dataset.end_date,
             seed,

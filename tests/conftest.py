@@ -19,8 +19,21 @@ def tmp_path():
 @pytest.fixture
 def config_factory() -> Callable[..., GeneratorConfig]:
     def factory(
-        *, orders: int = 240, scenario: str = "baseline", seed: int = 42
+        *,
+        orders: int = 240,
+        scenario: str = "baseline",
+        seed: int = 42,
+        customer_count: int | None = 120,
     ) -> GeneratorConfig:
+        simulation = {
+            "scenario": scenario,
+            "seller_count": 35,
+            "product_count": 90,
+            "min_items_per_order": 1,
+            "max_items_per_order": 4,
+        }
+        if customer_count is not None:
+            simulation["customer_count"] = customer_count
         return GeneratorConfig.model_validate(
             {
                 "dataset": {
@@ -29,14 +42,7 @@ def config_factory() -> Callable[..., GeneratorConfig]:
                     "number_of_orders": orders,
                     "random_seed": seed,
                 },
-                "simulation": {
-                    "scenario": scenario,
-                    "customer_count": 120,
-                    "seller_count": 35,
-                    "product_count": 90,
-                    "min_items_per_order": 1,
-                    "max_items_per_order": 4,
-                },
+                "simulation": simulation,
             }
         )
 

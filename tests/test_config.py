@@ -9,6 +9,7 @@ from synthetic_dataset_generator.config import GeneratorConfig, apply_overrides,
 def test_default_config_loads() -> None:
     config = load_config("config/default_config.yaml")
     assert config.dataset.number_of_orders == 50_000
+    assert 17_500 <= config.resolved_customer_count <= 22_500
     assert config.simulation.scenario == "baseline"
     assert config.dataset.start_date.isoformat() == "2024-01-01"
     assert config.data_quality.mode == "clean"
@@ -23,10 +24,36 @@ def test_cli_overrides_take_precedence() -> None:
     )
     assert config.simulation.scenario == "seller_churn"
     assert config.dataset.number_of_orders == 75
+    assert 27 <= config.resolved_customer_count <= 34
     assert config.dataset.random_seed == 7
 
     dirty = apply_overrides(config, dirty=True)
     assert dirty.data_quality.mode == "dirty"
+
+
+def test_explicit_customer_count_overrides_ratio() -> None:
+    config = GeneratorConfig.model_validate(
+        {
+            "dataset": {"number_of_orders": 1_000},
+            "simulation": {"customer_count": 275, "customer_to_order_ratio": 0.40},
+        }
+    )
+    assert config.resolved_customer_count == 275
+
+
+def test_customer_population_variation_is_seed_deterministic() -> None:
+    values = {
+        "dataset": {"number_of_orders": 1_000, "random_seed": 17},
+        "simulation": {
+            "customer_to_order_ratio": 0.40,
+            "customer_to_order_ratio_variation": 0.05,
+        },
+    }
+    first = GeneratorConfig.model_validate(values)
+    second = GeneratorConfig.model_validate(values)
+
+    assert first.resolved_customer_count == second.resolved_customer_count
+    assert 350 <= first.resolved_customer_count <= 450
 
 
 @pytest.mark.parametrize(
