@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import shutil
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -64,19 +65,42 @@ def _write_validation(output_dir: Path, result: ValidationResult) -> None:
 
 
 def export_dataset(
-    dataset: GeneratedDataset, output_root: str | Path, *, overwrite: bool = False
+    dataset: GeneratedDataset,
+    output_root: str | Path,
+    *,
+    overwrite: bool = False,
+    progress: Callable[[str], None] | None = None,
 ) -> ExportResult:
+    def report(message: str) -> None:
+        if progress is not None:
+            progress(message)
+
     output_root = Path(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
     output_dir, zip_path = _prepare_paths(output_root, dataset_basename(dataset), overwrite)
+    report(f"Created output folder: {output_dir}")
     for name, frame in dataset.tables.items():
-        frame.to_csv(output_dir / f"{name}.csv", index=False, date_format="%Y-%m-%dT%H:%M:%S%z")
+        file_path = output_dir / f"{name}.csv"
+        frame.to_csv(file_path, index=False, date_format="%Y-%m-%dT%H:%M:%S%z")
+        row_label = "row" if len(frame) == 1 else "rows"
+        report(f"Created {file_path.name} ({len(frame):,} {row_label}).")
+    report("Running data quality tests...")
     validation = validate_dataset(dataset.tables, output_dir)
+    for check in validation.checks:
+        status = "PASS" if check.passed else "FAIL"
+        report(f"[{status}] {check.name}: {check.details}")
     _write_validation(output_dir, validation)
+    report("Created validation_summary.json.")
+    report("Created validation_summary.md.")
+    passed_checks = sum(check.passed for check in validation.checks)
+    report(f"Data quality tests: {passed_checks}/{len(validation.checks)} passed.")
     created_zip: Path | None = None
     if validation.passed and dataset.config.output.create_zip:
         with ZipFile(zip_path, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
             for file_path in sorted(output_dir.iterdir()):
                 archive.write(file_path, arcname=file_path.name)
         created_zip = zip_path
+        report(f"Created ZIP package: {zip_path}")
+    elif dataset.config.output.create_zip:
+        report("Skipped ZIP package because one or more data quality tests failed.")
     return ExportResult(output_dir=output_dir, zip_path=created_zip, validation=validation)

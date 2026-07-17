@@ -40,6 +40,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def run_generate(args: argparse.Namespace) -> int:
+    print("Synthetic Dataset Generator")
+    print("Starting dataset generation...")
+    print(f"  Config: {Path(args.config)}")
+    print(f"  Scenarios: {Path(args.scenarios)}")
+    print("Loading and validating configuration...")
     config = apply_overrides(
         load_config(Path(args.config)),
         scenario=args.scenario,
@@ -48,12 +53,30 @@ def run_generate(args: argparse.Namespace) -> int:
     )
     scenarios = load_scenarios(Path(args.scenarios))
     scenario = scenarios[config.simulation.scenario]
-    dataset = DatasetGenerator(config, scenario).generate()
-    result = export_dataset(dataset, Path(args.output), overwrite=args.overwrite)
-    print(f"Dataset folder: {result.output_dir}")
+    print("Configuration ready:")
+    print(f"  Scenario: {config.simulation.scenario}")
+    print(f"  Orders: {config.dataset.number_of_orders:,}")
+    print(f"  Date range: {config.dataset.start_date} to {config.dataset.end_date}")
+    print(f"  Random seed: {config.dataset.random_seed}")
+    print(f"  Output root: {Path(args.output)}")
+    print("Generating dataset tables...")
+
+    def report(message: str) -> None:
+        print(f"  {message}")
+
+    dataset = DatasetGenerator(config, scenario, progress=report).generate()
+    print("Creating dataset files...")
+    result = export_dataset(
+        dataset,
+        Path(args.output),
+        overwrite=args.overwrite,
+        progress=report,
+    )
+    print("Generation complete.")
+    print(f"  Dataset folder: {result.output_dir}")
     if result.zip_path is not None:
-        print(f"ZIP package: {result.zip_path}")
-    print(f"Validation: {'PASSED' if result.validation.passed else 'FAILED'}")
+        print(f"  ZIP package: {result.zip_path}")
+    print(f"  Validation: {'PASSED' if result.validation.passed else 'FAILED'}")
     return 0 if result.validation.passed else 1
 
 

@@ -70,6 +70,35 @@ validation_summary.md
 The ZIP is created only after every validation check passes. A failed run retains its folder and
 validation reports for diagnosis and returns a nonzero exit code.
 
+## Local Streamlit Data Viewer
+
+The optional Streamlit viewer explores datasets that the CLI has already generated. It is a
+local-only project utility: it does not generate data, upload files, connect to a database, or add
+anything to a public website.
+
+Install the viewer dependencies alongside the development tools:
+
+```bash
+uv sync --extra dev --extra viewer
+```
+
+Generate a dataset first using the normal CLI command above. Generated dataset folders are detected
+under `data/output/` when they contain at least `orders.csv`, `order_items.csv`, `customers.csv`,
+and `products.csv`. Then launch the viewer from the repository root:
+
+```bash
+uv run streamlit run streamlit_app/app.py
+```
+
+The app provides overview KPIs and monthly trends, a table explorer with CSV downloads, marketplace
+analysis, shipping and review relationship views, generator validation results, and a schema/data
+dictionary reference. An exact alternative local dataset folder can also be entered in the sidebar.
+Missing optional files produce page-level messages rather than stopping the whole app.
+
+The viewer is not required for dataset generation. `uv sync --extra dev` and the existing CLI flow
+continue to work without the optional `viewer` extra. See
+[the local viewer guide](docs/streamlit_viewer.md) for architecture and metric definitions.
+
 ## Scenarios
 
 - `baseline` — normal seasonality, seller concentration, delivery, and review behavior.

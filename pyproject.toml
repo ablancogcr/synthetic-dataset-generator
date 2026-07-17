@@ -23,6 +23,10 @@ dev = [
   "pytest>=8.0",
   "ruff>=0.5",
 ]
+viewer = [
+  "plotly>=6.0",
+  "streamlit>=1.57",
+]
 
 [project.scripts]
 synthetic-dataset-generator = "synthetic_dataset_generator.cli:main"
@@ -32,6 +36,7 @@ packages = ["src/synthetic_dataset_generator"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-q -p no:cacheprovider"
 
 [tool.ruff]

@@ -9,7 +9,7 @@ from synthetic_dataset_generator.config import GeneratorConfig
 
 
 def test_cli_exports_zip_and_handles_collision(
-    tmp_path, config_factory: Callable[..., GeneratorConfig]
+    tmp_path, capsys, config_factory: Callable[..., GeneratorConfig]
 ) -> None:
     config = config_factory(orders=60)
     config_path = tmp_path / "config.yaml"
@@ -25,6 +25,15 @@ def test_cli_exports_zip_and_handles_collision(
         str(output),
     ]
     assert main(args) == 0
+    output_text = capsys.readouterr().out
+    assert "Synthetic Dataset Generator" in output_text
+    assert "Starting dataset generation..." in output_text
+    assert "Created customers.csv" in output_text
+    assert "Running data quality tests..." in output_text
+    assert "[PASS] required_tables" in output_text
+    assert "Created validation_summary.json." in output_text
+    assert "Data quality tests:" in output_text
+    assert "Generation complete." in output_text
     folder = output / "ecommerce_baseline_60_seed42"
     archive = output / "ecommerce_baseline_60_seed42.zip"
     assert folder.is_dir()
