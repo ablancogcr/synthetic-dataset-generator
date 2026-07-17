@@ -127,6 +127,7 @@ with st.sidebar:
 
 pages = [
     st.Page("app_pages/generate.py", title="Generate dataset", icon=":material/add_box:"),
+    st.Page("app_pages/configuration.py", title="Configuration", icon=":material/settings:"),
     st.Page("app_pages/overview.py", title="Overview", icon=":material/dashboard:"),
     st.Page("app_pages/data_explorer.py", title="Data explorer", icon=":material/table_view:"),
     st.Page(

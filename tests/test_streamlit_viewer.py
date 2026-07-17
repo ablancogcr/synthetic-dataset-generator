@@ -4,8 +4,15 @@ import json
 
 import pandas as pd
 import pytest
+from pydantic import ValidationError
 from streamlit.testing.v1 import AppTest
 
+from streamlit_app.utils.config_editor import (
+    read_yaml_mapping,
+    save_valid_yaml,
+    validate_generator_config,
+    validate_scenario_config,
+)
 from streamlit_app.utils.data_loader import (
     DataLoadError,
     file_signature,
@@ -47,6 +54,93 @@ def test_generate_page_exposes_the_cli_options_only():
     ]
     assert [item.label for item in app.selectbox] == ["Scenario"]
     assert [item.label for item in app.button] == ["Generate dataset"]
+
+
+def test_configuration_page_exposes_existing_fields_without_add_controls():
+    app = AppTest.from_file("streamlit_app/app_pages/configuration.py")
+    app.run()
+
+    assert not app.exception
+    assert [item.label for item in app.selectbox] == [
+        "Configuration file",
+        "Format",
+        "Scenario",
+        "Currency",
+        "Mode",
+    ]
+    assert [item.label for item in app.button] == ["Save valid changes"]
+    assert not any("add" in item.label.lower() for item in app.button)
+
+
+def test_invalid_generator_configuration_is_not_written(tmp_path):
+    config_path = tmp_path / "default_config.yaml"
+    original = read_yaml_mapping("config/default_config.yaml")
+    config_path.write_text("original content\n", encoding="utf-8")
+    candidate = json.loads(json.dumps(original))
+    candidate["simulation"]["min_items_per_order"] = 5
+    candidate["simulation"]["max_items_per_order"] = 2
+
+    with pytest.raises(ValidationError):
+        save_valid_yaml(
+            config_path,
+            original=original,
+            candidate=candidate,
+            validator=validate_generator_config,
+        )
+
+    assert config_path.read_text(encoding="utf-8") == "original content\n"
+
+
+def test_invalid_scenario_configuration_is_not_written(tmp_path):
+    config_path = tmp_path / "scenarios.yaml"
+    original = read_yaml_mapping("config/scenarios.yaml")
+    config_path.write_text("original content\n", encoding="utf-8")
+    candidate = json.loads(json.dumps(original))
+    candidate["holiday_spike"]["q4_multiplier"] = 0
+
+    with pytest.raises(ValidationError):
+        save_valid_yaml(
+            config_path,
+            original=original,
+            candidate=candidate,
+            validator=validate_scenario_config,
+        )
+
+    assert config_path.read_text(encoding="utf-8") == "original content\n"
+
+
+def test_configuration_editor_rejects_new_parameters(tmp_path):
+    config_path = tmp_path / "default_config.yaml"
+    original = read_yaml_mapping("config/default_config.yaml")
+    config_path.write_text("original content\n", encoding="utf-8")
+    candidate = json.loads(json.dumps(original))
+    candidate["dataset"]["new_parameter"] = "not allowed"
+
+    with pytest.raises(ValueError, match="adding or removing parameters"):
+        save_valid_yaml(
+            config_path,
+            original=original,
+            candidate=candidate,
+            validator=validate_generator_config,
+        )
+
+    assert config_path.read_text(encoding="utf-8") == "original content\n"
+
+
+def test_valid_configuration_change_is_saved_atomically(tmp_path):
+    config_path = tmp_path / "default_config.yaml"
+    original = read_yaml_mapping("config/default_config.yaml")
+    candidate = json.loads(json.dumps(original))
+    candidate["dataset"]["number_of_orders"] = 1_234
+
+    save_valid_yaml(
+        config_path,
+        original=original,
+        candidate=candidate,
+        validator=validate_generator_config,
+    )
+
+    assert read_yaml_mapping(config_path) == candidate
 
 
 def test_dataset_discovery_separates_valid_and_incomplete_directories(tmp_path):
@@ -186,9 +280,7 @@ def test_validation_loader_classifies_expected_issues_and_reads_manifest(tmp_pat
         ],
     }
     (tmp_path / "validation_summary.json").write_text(json.dumps(payload), encoding="utf-8")
-    (tmp_path / "dirty_data_manifest.json").write_text(
-        json.dumps(manifest), encoding="utf-8"
-    )
+    (tmp_path / "dirty_data_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
     report = load_validation_report(tmp_path)
 
@@ -269,9 +361,7 @@ def test_schema_diagram_marks_keys_and_switches_column_detail():
     compact = build_mermaid_er_diagram(
         tables, primary_keys, relationships, include_all_columns=False
     )
-    full = build_mermaid_er_diagram(
-        tables, primary_keys, relationships, include_all_columns=True
-    )
+    full = build_mermaid_er_diagram(tables, primary_keys, relationships, include_all_columns=True)
 
     assert "string customer_id PK" in compact
     assert "string customer_id FK" in compact

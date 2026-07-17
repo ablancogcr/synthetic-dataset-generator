@@ -45,6 +45,17 @@ Packages written outside `data/output/` are retained as the app's generated data
 the browser session. The sidebar can still be used to choose another local package or enter a
 different exact folder manually.
 
+## Configuration
+
+**Configuration** displays the repository's two generator YAML files: `config/default_config.yaml`
+and `config/scenarios.yaml`. It renders controls only for parameters already present in each file;
+the page has no way to add or remove parameters or scenarios.
+
+Before writing, the page validates the full candidate file with the same Pydantic schemas used by
+the generator, including cross-field constraints such as date ranges and item/seller limits. An
+invalid edit is shown as an error and leaves the source YAML file unchanged. Successful writes are
+atomic, so an interrupted write does not leave a partial configuration file.
+
 ## Architecture
 
 `streamlit_app/app.py` configures navigation, discovers datasets, and owns shared selection state.
@@ -79,6 +90,8 @@ metadata exists.
 
 - **Generate dataset** runs the CLI-equivalent local generator, shows its progress and validation
   output, and downloads the generated ZIP package.
+- **Configuration** views and edits only existing keys in the local default and scenario YAML files,
+  validates the complete candidate configuration, and saves only valid values.
 - **Overview** shows entity counts, revenue KPIs, delivery/review KPIs, monthly trends, and order
   statuses.
 - **Data explorer** previews any available CSV, shows columns and pandas data types, applies a
