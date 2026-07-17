@@ -16,6 +16,7 @@ from synthetic_dataset_generator.orders import generate_order_shells
 from synthetic_dataset_generator.payments import generate_payments
 from synthetic_dataset_generator.products import generate_products
 from synthetic_dataset_generator.reviews import generate_reviews
+from synthetic_dataset_generator.seller_products import generate_seller_products
 from synthetic_dataset_generator.sellers import generate_sellers
 from synthetic_dataset_generator.shipping import generate_shipping
 
@@ -72,6 +73,9 @@ class DatasetGenerator:
             config.simulation.product_count, config.dataset.start_date, seed
         )
         self._report(f"Generated products ({len(products):,} rows).")
+        self._report("Generating seller-product catalog...")
+        seller_products = generate_seller_products(config, sellers, products)
+        self._report(f"Generated seller-product catalog ({len(seller_products):,} rows).")
         self._report("Generating orders...")
         orders = generate_order_shells(config, self.scenario, customers, customer_weights)
         self._report(f"Generated orders ({len(orders):,} rows).")
@@ -83,6 +87,7 @@ class DatasetGenerator:
             customers,
             sellers,
             products,
+            seller_products,
             product_weights,
         )
         self._report(f"Generated order items ({len(order_items):,} rows).")
@@ -115,6 +120,7 @@ class DatasetGenerator:
             "customers": customers,
             "sellers": sellers.frame,
             "products": products,
+            "seller_products": seller_products,
             "orders": orders,
             "order_items": order_items,
             "payments": payments,

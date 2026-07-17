@@ -260,3 +260,47 @@ def test_schema_diagram_marks_keys_and_switches_column_detail():
     assert "order_status" not in compact
     assert "customer_segment" in full
     assert "order_status" in full
+
+
+def test_schema_diagram_supports_seller_product_bridge():
+    tables = {
+        "sellers": pd.DataFrame({"seller_id": ["seller_1"]}),
+        "products": pd.DataFrame({"product_id": ["product_1"]}),
+        "seller_products": pd.DataFrame(
+            {
+                "seller_product_id": ["seller_product_1"],
+                "seller_id": ["seller_1"],
+                "product_id": ["product_1"],
+            }
+        ),
+    }
+    primary_keys = {
+        "sellers": "seller_id",
+        "products": "product_id",
+        "seller_products": "seller_product_id",
+    }
+    relationships = (
+        (
+            "sellers.seller_id",
+            "seller_products.seller_id",
+            "Seller listings",
+            "||--|{",
+            "offers",
+        ),
+        (
+            "products.product_id",
+            "seller_products.product_id",
+            "Product listings",
+            "||--|{",
+            "listed_by",
+        ),
+    )
+
+    diagram = build_mermaid_er_diagram(
+        tables, primary_keys, relationships, include_all_columns=False
+    )
+
+    assert "seller_product_id PK" in diagram
+    assert "seller_id FK" in diagram
+    assert "product_id FK" in diagram
+    assert "sellers ||--|{ seller_products : offers" in diagram

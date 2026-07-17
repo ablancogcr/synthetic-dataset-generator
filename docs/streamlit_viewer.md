@@ -39,6 +39,7 @@ A selectable dataset directory must contain:
 
 - `orders.csv`
 - `order_items.csv`
+- `seller_products.csv`
 - `customers.csv`
 - `products.csv`
 
@@ -64,7 +65,7 @@ metadata exists.
   distinguishes expected dirty issues from unexpected failures, and displays counts from the dirty
   manifest. It does not create a separate validation engine.
 - **Schema** reports table dimensions, pandas data types, documented primary keys, foreign-key
-  relationships, and `data_dictionary.csv` content.
+  relationships, including the seller-product listing bridge, and `data_dictionary.csv` content.
 
 ## Metric definitions
 
@@ -88,7 +89,8 @@ and `shipping.csv` in the same metric.
 ## Expected and optional files
 
 The viewer can list every CSV it finds. Full coverage uses the generator's standard output:
-`customers.csv`, `sellers.csv`, `products.csv`, `orders.csv`, `order_items.csv`, `payments.csv`,
+`customers.csv`, `sellers.csv`, `products.csv`, `seller_products.csv`, `orders.csv`,
+`order_items.csv`, `payments.csv`,
 `shipping.csv`, `reviews.csv`, `calendar.csv`, `simulation_metadata.csv`, and
 `data_dictionary.csv`, plus `validation_summary.json` and `validation_summary.md`.
 Dirty packages additionally include `dirty_data_manifest.json`.

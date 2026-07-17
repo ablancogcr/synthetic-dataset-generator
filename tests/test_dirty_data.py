@@ -55,8 +55,20 @@ def test_dirty_injection_is_structured_and_protects_identifiers(
 
     protected = {
         "customers": ("customer_id", "customer_unique_id"),
+        "seller_products": (
+            "seller_product_id",
+            "seller_id",
+            "product_id",
+            "scenario_name",
+        ),
         "orders": ("order_id", "customer_id", "scenario_name"),
-        "order_items": ("order_id", "order_item_id", "product_id", "seller_id"),
+        "order_items": (
+            "order_id",
+            "order_item_id",
+            "seller_product_id",
+            "product_id",
+            "seller_id",
+        ),
         "payments": ("order_id", "payment_sequential"),
         "shipping": ("order_id",),
         "reviews": ("review_id", "order_id"),
@@ -64,6 +76,14 @@ def test_dirty_injection_is_structured_and_protects_identifiers(
     }
     for table_name, columns in protected.items():
         assert not dirty.tables[table_name][list(columns)].isna().any().any()
+    listing_targets = {
+        (target.defect_type, target.column)
+        for target in dirty.cell_targets
+        if target.table == "seller_products"
+    }
+    assert ("negative_values", "seller_price_usd") in listing_targets
+    assert ("incorrect_date_formats", "listing_created_at") in listing_targets
+    assert ("invalid_types", "listing_active_flag") in listing_targets
 
 
 def test_dirty_targets_are_deterministic_and_namespaced(
@@ -83,6 +103,7 @@ def test_dirty_targets_are_deterministic_and_namespaced(
         "customers",
         "sellers",
         "products",
+        "seller_products",
         "orders",
         "order_items",
         "payments",
@@ -163,8 +184,13 @@ def test_dirty_export_packages_expected_issues_and_counts_only_manifest(
     assert "invalid_date" in csv_text
     reviews = pd.read_csv(result.output_dir / "reviews.csv")
     items = pd.read_csv(result.output_dir / "order_items.csv")
+    seller_products = pd.read_csv(result.output_dir / "seller_products.csv")
     assert pd.to_numeric(reviews["review_score"], errors="coerce").min() < 0
     assert pd.to_numeric(items["item_price_usd"], errors="coerce").min() < 0
+    assert pd.to_numeric(seller_products["seller_price_usd"], errors="coerce").min() < 0
+    assert seller_products["seller_product_id"].notna().all()
+    assert seller_products["seller_id"].notna().all()
+    assert seller_products["product_id"].notna().all()
     with ZipFile(result.zip_path) as archive:
         assert "dirty_data_manifest.json" in archive.namelist()
 

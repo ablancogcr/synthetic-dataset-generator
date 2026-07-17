@@ -29,6 +29,7 @@ def test_cli_exports_zip_and_handles_collision(
     assert "Synthetic Dataset Generator" in output_text
     assert "Starting dataset generation..." in output_text
     assert "Created customers.csv" in output_text
+    assert "Created seller_products.csv" in output_text
     assert "Running data quality tests..." in output_text
     assert "[PASS] required_tables" in output_text
     assert "Created validation_summary.json." in output_text
@@ -38,6 +39,7 @@ def test_cli_exports_zip_and_handles_collision(
     archive = output / "ecommerce_baseline_60_seed42.zip"
     assert folder.is_dir()
     assert archive.is_file()
+    assert (folder / "seller_products.csv").is_file()
     assert main(args) == 2
     assert main([*args, "--overwrite"]) == 0
 

@@ -13,6 +13,8 @@ def test_default_config_loads() -> None:
     assert config.dataset.start_date.isoformat() == "2024-01-01"
     assert config.data_quality.mode == "clean"
     assert config.data_quality.null_rate == 0.01
+    assert config.simulation.min_sellers_per_product == 1
+    assert config.simulation.max_sellers_per_product == 4
 
 
 def test_cli_overrides_take_precedence() -> None:
@@ -33,6 +35,16 @@ def test_cli_overrides_take_precedence() -> None:
         {"dataset": {"start_date": "2025-01-01", "end_date": "2024-01-01"}},
         {"dataset": {"number_of_orders": 0}},
         {"simulation": {"min_items_per_order": 5, "max_items_per_order": 2}},
+        {"simulation": {"min_sellers_per_product": 4, "max_sellers_per_product": 2}},
+        {"simulation": {"seller_count": 3, "max_sellers_per_product": 4}},
+        {
+            "simulation": {
+                "seller_count": 10,
+                "product_count": 2,
+                "min_sellers_per_product": 1,
+                "max_sellers_per_product": 4,
+            }
+        },
         {"simulation": {"scenario": "unknown"}},
         {"data_quality": {"null_rate": -0.1}},
         {"data_quality": {"empty_order_rate": 1.1}},

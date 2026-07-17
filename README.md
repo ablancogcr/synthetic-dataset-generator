@@ -78,11 +78,15 @@ The folder and ZIP contain:
 customers.csv                 payments.csv
 sellers.csv                   shipping.csv
 products.csv                  reviews.csv
-orders.csv                    calendar.csv
-order_items.csv               simulation_metadata.csv
-data_dictionary.csv           validation_summary.json
-validation_summary.md
+seller_products.csv           calendar.csv
+orders.csv                    simulation_metadata.csv
+order_items.csv               data_dictionary.csv
+validation_summary.json       validation_summary.md
 ```
+
+`seller_products.csv` is the authoritative marketplace catalog. It connects sellers and products
+through seller-specific listings, while `order_items.csv` retains `seller_product_id`, `seller_id`,
+and `product_id` for convenient analysis. Every order item must resolve to one exact listing.
 
 Dirty packages also include `dirty_data_manifest.json`. It reports requested settings and applied
 counts by defect, table, and column, but deliberately omits row IDs, cell locations, and removed
@@ -107,7 +111,7 @@ uv sync --extra dev --extra viewer
 
 Generate a dataset first using the normal CLI command above. Generated dataset folders are detected
 under `data/output/` when they contain at least `orders.csv`, `order_items.csv`, `customers.csv`,
-and `products.csv`. Then launch the viewer from the repository root:
+`products.csv`, and `seller_products.csv`. Then launch the viewer from the repository root:
 
 ```bash
 uv run streamlit run streamlit_app/app.py
@@ -132,6 +136,11 @@ continue to work without the optional `viewer` extra. See
 Scenario parameters are visible in `config/scenarios.yaml`. The general dataset shape is controlled
 by `config/default_config.yaml`, and CLI options override scenario, order count, and seed.
 
+Catalog breadth is controlled by `simulation.min_sellers_per_product` and
+`simulation.max_sellers_per_product`, defaulting to one through four sellers per product. Every
+product and seller receives at least one listing; invalid combinations that cannot provide complete
+coverage are rejected during configuration validation.
+
 ## Dirty-data training mode
 
 Dirty mode is intended for data-quality profiling, ingestion hardening, SQL cleaning exercises, and
@@ -139,6 +148,10 @@ portfolio demonstrations. The default preset introduces null text attributes, mi
 days, inconsistent or malformed dates, text tokens in numeric and boolean fields, negative monetary
 values and review scores, and order headers with no item rows. Primary keys, foreign keys, scenario
 fields, metadata, and the data dictionary are protected.
+
+Seller listings participate in dirty mode without breaking their relationships: listing prices can
+be negative, listing dates can use malformed formats, and listing active flags can contain invalid
+types. Listing identifiers and seller/product foreign keys remain protected.
 
 Cell-level rates are applied independently to non-overlapping field groups. Any positive rate affects
 at least one eligible value without exceeding the available population. Missing days remove the
@@ -150,7 +163,8 @@ schema by design and are not silently repaired by the generator or local viewer.
 
 ## Portfolio uses
 
-- Build a dimensional SQL model and analyze revenue, retention, seller concentration, and cohorts.
+- Build a dimensional SQL model and analyze revenue, retention, seller concentration, catalog
+  breadth, listing-price dispersion, and cohorts.
 - Create a BI dashboard comparing regions, categories, fulfillment outcomes, and scenarios.
 - Model late-delivery risk or customer satisfaction using transparent synthetic drivers.
 - Practice data-quality checks, data dictionaries, ingestion, and stakeholder documentation.

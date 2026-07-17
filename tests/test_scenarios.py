@@ -49,3 +49,12 @@ def test_seller_churn_blocks_post_deactivation_orders(
         pd.to_datetime(joined["order_purchase_timestamp"])
         < pd.to_datetime(joined["deactivated_at"])
     ).all()
+    listing_states = tables["seller_products"].merge(
+        tables["sellers"][["seller_id", "seller_active_flag"]], on="seller_id"
+    )
+    assert listing_states["listing_active_flag"].eq(
+        listing_states["seller_active_flag"]
+    ).all()
+    assert not listing_states.loc[
+        listing_states["seller_id"].isin(deactivated["seller_id"]), "listing_active_flag"
+    ].any()

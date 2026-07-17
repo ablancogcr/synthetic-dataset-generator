@@ -28,6 +28,13 @@ products,product_height_cm,float,Product height in centimeters.,3.9,False
 products,product_width_cm,float,Product width in centimeters.,5.4,False
 products,product_price_base_usd,float,Base synthetic product price in USD.,215.06,False
 products,created_at,date,Synthetic product creation date.,2024-01-01 00:00:00,False
+seller_products,seller_product_id,string,Synthetic seller listing identifier.,seller_product_0000001,False
+seller_products,seller_id,string,Seller offering the product.,seller_000666,False
+seller_products,product_id,string,Product offered by the seller.,product_000001,False
+seller_products,seller_price_usd,float,Seller-specific listing price in USD.,196.34,False
+seller_products,listing_created_at,date,Date the seller listing became available.,2024-01-01 00:00:00,False
+seller_products,listing_active_flag,boolean,Whether the listing is active at the end of the simulation period.,True,False
+seller_products,scenario_name,string,Scenario used for this listing.,baseline,False
 orders,order_id,string,Synthetic order identifier.,order_0000001,False
 orders,customer_id,string,Customer placing the order.,customer_000875,False
 orders,order_status,string,Order fulfillment status.,delivered,False
@@ -47,17 +54,18 @@ orders,is_promotion_period,boolean,Whether purchase occurred in a promotion wind
 orders,scenario_name,string,Scenario used for this order.,baseline,False
 order_items,order_id,string,Parent order identifier.,order_0000001,False
 order_items,order_item_id,integer,One-based item sequence within order.,1,False
-order_items,product_id,string,Purchased product identifier.,product_003830,False
+order_items,seller_product_id,string,Purchased seller listing identifier.,seller_product_0004917,False
+order_items,product_id,string,Purchased product identifier.,product_002805,False
 order_items,seller_id,string,Seller fulfilling the order.,seller_000050,False
-order_items,item_price_usd,float,Synthetic item price in USD.,46.65,False
-order_items,shipping_cost_usd,float,Allocated item shipping cost in USD.,5.51,False
-order_items,item_total_usd,float,Item price plus shipping cost in USD.,52.16,False
+order_items,item_price_usd,float,Synthetic item price in USD.,288.6,False
+order_items,shipping_cost_usd,float,Allocated item shipping cost in USD.,9.49,False
+order_items,item_total_usd,float,Item price plus shipping cost in USD.,298.09,False
 order_items,scenario_name,string,Scenario used for this item.,baseline,False
 payments,order_id,string,Paid order identifier.,order_0000001,False
 payments,payment_sequential,integer,One-based payment sequence.,1,False
 payments,payment_type,string,Synthetic payment method.,credit_card,False
-payments,payment_installments,integer,Installment count.,1,False
-payments,payment_value_usd,float,Payment value in USD.,134.11,False
+payments,payment_installments,integer,Installment count.,2,False
+payments,payment_value_usd,float,Payment value in USD.,492.91,False
 payments,scenario_name,string,Scenario used for this payment.,baseline,False
 shipping,order_id,string,Shipped order identifier.,order_0000001,False
 shipping,seller_state,string,Origin state.,NY,False
@@ -70,7 +78,7 @@ shipping,estimated_delivery_days,integer,Estimated delivery days.,7,False
 shipping,actual_delivery_days,integer,Actual delivery days.,7.0,True
 shipping,delivery_delay_days,integer,Days delivered after estimate.,0.0,True
 shipping,late_delivery_flag,boolean,Whether delivery missed its estimate.,False,False
-shipping,shipping_cost_usd,float,Order shipping cost in USD.,12.78,False
+shipping,shipping_cost_usd,float,Order shipping cost in USD.,16.46,False
 shipping,scenario_name,string,Scenario used for shipping.,baseline,False
 reviews,review_id,string,Synthetic review identifier.,review_0000001,False
 reviews,order_id,string,Reviewed delivered order.,order_0000002,False
@@ -92,19 +100,22 @@ calendar,is_weekend,boolean,Weekend flag.,False,False
 calendar,is_holiday_period,boolean,Holiday-season flag.,False,False
 calendar,is_promotion_period,boolean,Promotion-window flag.,False,False
 calendar,season,string,Meteorological season.,winter,False
-simulation_metadata,simulation_run_id,string,Unique synthetic simulation run identifier.,simulation_run_20260714_220702_baseline_seed42,False
+simulation_metadata,simulation_run_id,string,Unique synthetic simulation run identifier.,simulation_run_20260717_155231_baseline_seed42,False
 simulation_metadata,dataset_name,string,Configured dataset name.,Synthetic Ecommerce Dataset,False
 simulation_metadata,domain,string,Dataset domain.,ecommerce_marketplace,False
 simulation_metadata,scenario_name,string,Applied scenario.,baseline,False
 simulation_metadata,random_seed,integer,Root random seed.,42,False
-simulation_metadata,generated_at,datetime,UTC generation timestamp.,2026-07-14 22:07:02+00:00,False
+simulation_metadata,generated_at,datetime,UTC generation timestamp.,2026-07-17 15:52:31+00:00,False
 simulation_metadata,start_date,date,Configured period start.,2024-01-01,False
 simulation_metadata,end_date,date,Configured period end.,2026-12-31,False
+simulation_metadata,requested_number_of_orders,integer,Configured order count before defects.,10000,False
 simulation_metadata,number_of_orders,integer,Generated order count.,10000,False
 simulation_metadata,number_of_customers,integer,Generated customer count.,20000,False
 simulation_metadata,number_of_sellers,integer,Generated seller count.,1200,False
 simulation_metadata,number_of_products,integer,Generated product count.,8000,False
+simulation_metadata,number_of_seller_products,integer,Generated seller listing count.,13966,False
 simulation_metadata,currency,string,Synthetic monetary unit.,USD,False
+simulation_metadata,data_quality_mode,string,Whether the output is clean or intentionally dirty.,clean,False
 simulation_metadata,disclaimer,string,Synthetic-data usage disclaimer.,"Fully synthetic data for education, analytics practice, portfolio projects, SQL modeling, dashboard development, and machine learning experiments. It contains no real customers, sellers, orders, companies, or performance and must not be used as real market data or for operational decisions.",False
 data_dictionary,table_name,string,Dataset table.,,False
 data_dictionary,column_name,string,Column in the table.,,False

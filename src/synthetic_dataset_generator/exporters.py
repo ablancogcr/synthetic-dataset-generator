@@ -92,7 +92,7 @@ def export_dataset(
     output_root.mkdir(parents=True, exist_ok=True)
     output_dir, zip_path = _prepare_paths(output_root, dataset_basename(dataset), overwrite)
     report(f"Created output folder: {output_dir}")
-    source_validation = validate_dataset(dataset.tables)
+    source_validation = validate_dataset(dataset.tables, config=dataset.config)
     dirty_result = None
     output_tables = dataset.tables
     if dataset.config.data_quality.mode == "dirty" and source_validation.passed:
@@ -110,11 +110,11 @@ def export_dataset(
         report("Created dirty_data_manifest.json.")
     report("Running data quality tests...")
     if not source_validation.passed:
-        validation = validate_dataset(dataset.tables, output_dir)
+        validation = validate_dataset(dataset.tables, output_dir, config=dataset.config)
     elif dirty_result is not None:
         validation = audit_dirty_output(output_dir, dirty_result, source_validation)
     else:
-        validation = validate_dataset(output_tables, output_dir)
+        validation = validate_dataset(output_tables, output_dir, config=dataset.config)
     for check in validation.checks:
         status = {
             "passed": "PASS",

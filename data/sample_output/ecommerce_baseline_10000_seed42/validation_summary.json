@@ -1,272 +1,472 @@
 {
   "overall_status": "passed",
-  "checks_passed": 53,
-  "checks_total": 53,
+  "source_integrity_status": "passed",
+  "checks_passed": 66,
+  "checks_expected_issues": 0,
+  "checks_failed": 0,
+  "checks_total": 66,
   "checks": [
     {
       "name": "required_tables",
       "passed": true,
-      "details": "Missing tables: []"
+      "details": "Missing tables: []",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_customers",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_customers",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_sellers",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_sellers",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_products",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_products",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "schema_seller_products",
+      "passed": true,
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "required_values_seller_products",
+      "passed": true,
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_orders",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_orders",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_order_items",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_order_items",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_payments",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_payments",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_shipping",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_shipping",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_reviews",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_reviews",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_calendar",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_calendar",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_simulation_metadata",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_simulation_metadata",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "schema_data_dictionary",
       "passed": true,
-      "details": "Columns match the declared schema."
+      "details": "Columns match the declared schema.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_values_data_dictionary",
       "passed": true,
-      "details": "Missing required values: 0"
+      "details": "Missing required values: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "required_files",
       "passed": true,
-      "details": "Missing files: []"
+      "details": "Missing files: []",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_customers",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_sellers",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_products",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "unique_seller_products",
+      "passed": true,
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_orders",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_reviews",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_calendar",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_order_items",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_payments",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "unique_shipping",
       "passed": true,
-      "details": "Duplicate keys: 0"
+      "details": "Duplicate keys: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "fk_orders_customer_id",
       "passed": true,
-      "details": "Invalid rows: 0"
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "fk_order_items_order_id",
       "passed": true,
-      "details": "Invalid rows: 0"
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "fk_seller_products_seller_id",
+      "passed": true,
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "fk_seller_products_product_id",
+      "passed": true,
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "fk_order_items_seller_product_id",
+      "passed": true,
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "fk_order_items_product_id",
       "passed": true,
-      "details": "Invalid rows: 0"
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "fk_order_items_seller_id",
       "passed": true,
-      "details": "Invalid rows: 0"
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "fk_payments_order_id",
       "passed": true,
-      "details": "Invalid rows: 0"
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "fk_shipping_order_id",
       "passed": true,
-      "details": "Invalid rows: 0"
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "fk_reviews_order_id",
       "passed": true,
-      "details": "Invalid rows: 0"
+      "details": "Invalid rows: 0",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "unique_seller_product_pairs",
+      "passed": true,
+      "details": "Each seller can list a product only once.",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "seller_product_catalog_coverage",
+      "passed": true,
+      "details": "Every seller and product has at least one listing.",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "seller_product_cardinality",
+      "passed": true,
+      "details": "Each product has between 1 and 4 sellers.",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "order_item_listing_consistency",
+      "passed": true,
+      "details": "Order-item seller and product identifiers match the referenced listing.",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "one_seller_per_order",
+      "passed": true,
+      "details": "Every order is fulfilled by one seller.",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "seller_product_active_status",
+      "passed": true,
+      "details": "Listing period-end active flags match their sellers.",
+      "expected": false,
+      "status": "passed"
+    },
+    {
+      "name": "seller_product_available_at_purchase",
+      "passed": true,
+      "details": "Purchased listings existed when their orders were placed.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "valid_order_statuses",
       "passed": true,
-      "details": "Allowed values only."
+      "details": "Allowed values only.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "valid_payment_types",
       "passed": true,
-      "details": "Allowed values only."
+      "details": "Allowed values only.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "valid_review_scores",
       "passed": true,
-      "details": "Scores are between 1 and 5."
+      "details": "Scores are between 1 and 5.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "valid_states",
       "passed": true,
-      "details": "All geography uses recognized US state abbreviations."
+      "details": "All geography uses recognized US state abbreviations.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "non_negative_values",
       "passed": true,
-      "details": "Prices and shipping values are non-negative."
+      "details": "Prices and shipping values are non-negative.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "date_sequence",
       "passed": true,
-      "details": "Delivered-order timestamps are logically ordered."
+      "details": "Delivered-order timestamps are logically ordered.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "configured_date_range",
       "passed": true,
-      "details": "All business dates are within the configured period."
+      "details": "All business dates are within the configured period.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "payment_reconciliation",
       "passed": true,
-      "details": "Payments match order item totals to the cent."
+      "details": "Payments match order item totals to the cent.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "shipping_coverage",
       "passed": true,
-      "details": "Exactly one shipping row exists per order."
+      "details": "Exactly one shipping row exists per order.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "shipping_reconciliation",
       "passed": true,
-      "details": "Order shipping equals item shipping."
+      "details": "Order shipping equals item shipping.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "reviews_for_delivered_orders",
       "passed": true,
-      "details": "Reviews belong only to delivered orders."
+      "details": "Reviews belong only to delivered orders.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "scenario_populated",
       "passed": true,
-      "details": "Scenario names are populated on scenario-bearing tables."
+      "details": "Scenario names are populated on scenario-bearing tables.",
+      "expected": false,
+      "status": "passed"
     },
     {
       "name": "seller_churn_cutoff",
       "passed": true,
-      "details": "Deactivated sellers receive no post-churn orders."
+      "details": "Deactivated sellers receive no post-churn orders.",
+      "expected": false,
+      "status": "passed"
     }
   ]
 }

@@ -18,6 +18,8 @@ simulation:
   customer_count: 20000
   seller_count: 1200
   product_count: 8000
+  min_sellers_per_product: 1
+  max_sellers_per_product: 4
   min_items_per_order: 1
   max_items_per_order: 5
   repeat_customer_rate: 0.18

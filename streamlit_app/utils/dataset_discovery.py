@@ -5,7 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-CORE_TABLES = frozenset({"orders", "order_items", "customers", "products"})
+CORE_TABLES = frozenset(
+    {"orders", "order_items", "customers", "products", "seller_products"}
+)
 
 
 @dataclass(frozen=True)

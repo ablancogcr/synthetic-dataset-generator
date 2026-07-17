@@ -37,6 +37,7 @@ def generate_metadata(config: GeneratorConfig, tables: dict[str, pd.DataFrame]) 
         "number_of_customers": len(tables["customers"]),
         "number_of_sellers": len(tables["sellers"]),
         "number_of_products": len(tables["products"]),
+        "number_of_seller_products": len(tables["seller_products"]),
         "currency": config.business_rules.currency,
         "data_quality_mode": config.data_quality.mode,
         "disclaimer": DISCLAIMER,

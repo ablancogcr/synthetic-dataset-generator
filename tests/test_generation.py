@@ -20,10 +20,12 @@ def test_generation_produces_declared_tables(
     assert len(dataset.tables["orders"]) == 180
     assert len(dataset.tables["shipping"]) == 180
     assert len(dataset.tables["order_items"]) >= 180
+    assert len(dataset.tables["seller_products"]) >= 90
     assert len(dataset.tables["calendar"]) == 1096
     metadata = dataset.tables["simulation_metadata"].iloc[0]
     assert metadata["requested_number_of_orders"] == 180
     assert metadata["number_of_orders"] == 180
+    assert metadata["number_of_seller_products"] == len(dataset.tables["seller_products"])
     assert metadata["data_quality_mode"] == "clean"
 
 
@@ -37,6 +39,7 @@ def test_fixed_seed_reproduces_analytical_tables(
         "customers",
         "sellers",
         "products",
+        "seller_products",
         "orders",
         "order_items",
         "payments",

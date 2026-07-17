@@ -52,6 +52,17 @@ SCHEMA_REGISTRY: dict[str, dict[str, ColumnSpec]] = {
         "product_price_base_usd": _spec("float", "Base synthetic product price in USD."),
         "created_at": _spec("date", "Synthetic product creation date."),
     },
+    "seller_products": {
+        "seller_product_id": _spec("string", "Synthetic seller listing identifier."),
+        "seller_id": _spec("string", "Seller offering the product."),
+        "product_id": _spec("string", "Product offered by the seller."),
+        "seller_price_usd": _spec("float", "Seller-specific listing price in USD."),
+        "listing_created_at": _spec("date", "Date the seller listing became available."),
+        "listing_active_flag": _spec(
+            "boolean", "Whether the listing is active at the end of the simulation period."
+        ),
+        "scenario_name": _spec("string", "Scenario used for this listing."),
+    },
     "orders": {
         "order_id": _spec("string", "Synthetic order identifier."),
         "customer_id": _spec("string", "Customer placing the order."),
@@ -74,6 +85,7 @@ SCHEMA_REGISTRY: dict[str, dict[str, ColumnSpec]] = {
     "order_items": {
         "order_id": _spec("string", "Parent order identifier."),
         "order_item_id": _spec("integer", "One-based item sequence within order."),
+        "seller_product_id": _spec("string", "Purchased seller listing identifier."),
         "product_id": _spec("string", "Purchased product identifier."),
         "seller_id": _spec("string", "Seller fulfilling the order."),
         "item_price_usd": _spec("float", "Synthetic item price in USD."),
@@ -144,6 +156,7 @@ SCHEMA_REGISTRY: dict[str, dict[str, ColumnSpec]] = {
         "number_of_customers": _spec("integer", "Generated customer count."),
         "number_of_sellers": _spec("integer", "Generated seller count."),
         "number_of_products": _spec("integer", "Generated product count."),
+        "number_of_seller_products": _spec("integer", "Generated seller listing count."),
         "currency": _spec("string", "Synthetic monetary unit."),
         "data_quality_mode": _spec("string", "Whether the output is clean or intentionally dirty."),
         "disclaimer": _spec("string", "Synthetic-data usage disclaimer."),

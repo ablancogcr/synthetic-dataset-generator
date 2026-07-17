@@ -13,6 +13,7 @@ PRIMARY_KEYS = {
     "customers": "customer_id",
     "sellers": "seller_id",
     "products": "product_id",
+    "seller_products": "seller_product_id",
     "orders": "order_id",
     "order_items": "order_id + order_item_id",
     "payments": "order_id + payment_sequential",
@@ -60,6 +61,27 @@ RELATIONSHIPS: tuple[Relationship, ...] = (
         "receives",
     ),
     (
+        "sellers.seller_id",
+        "seller_products.seller_id",
+        "One seller to many product listings",
+        "||--|{",
+        "offers",
+    ),
+    (
+        "products.product_id",
+        "seller_products.product_id",
+        "One product to one or more seller listings",
+        "||--|{",
+        "listed_by",
+    ),
+    (
+        "seller_products.seller_product_id",
+        "order_items.seller_product_id",
+        "One seller listing to many order items",
+        "||--o{",
+        "purchased_as",
+    ),
+    (
         "products.product_id",
         "order_items.product_id",
         "One product to many items",
@@ -101,6 +123,28 @@ for table_name in available_tables:
         }
     )
 
+st.subheader("Entity relationship diagram")
+diagram_detail = st.segmented_control(
+    "Diagram detail",
+    ("Key fields", "All fields"),
+    default="Key fields",
+    required=True,
+    key="schema_diagram_detail",
+)
+st.caption(
+    "PK marks primary keys and FK marks foreign keys. Calendar, simulation metadata, "
+    "and the data dictionary are standalone reference tables."
+)
+st.mermaid_chart(
+    build_mermaid_er_diagram(
+        loaded_tables,
+        PRIMARY_KEYS,
+        RELATIONSHIPS,
+        include_all_columns=diagram_detail == "All fields",
+    ),
+    width="stretch",
+)
+
 st.subheader("Available tables")
 st.dataframe(
     pd.DataFrame(summary_rows),
@@ -125,28 +169,6 @@ if loaded_tables:
         }
     )
     st.dataframe(column_schema, hide_index=True)
-
-st.subheader("Entity relationship diagram")
-diagram_detail = st.segmented_control(
-    "Diagram detail",
-    ("Key fields", "All fields"),
-    default="Key fields",
-    required=True,
-    key="schema_diagram_detail",
-)
-st.caption(
-    "PK marks primary keys and FK marks foreign keys. Calendar, simulation metadata, "
-    "and the data dictionary are standalone reference tables."
-)
-st.mermaid_chart(
-    build_mermaid_er_diagram(
-        loaded_tables,
-        PRIMARY_KEYS,
-        RELATIONSHIPS,
-        include_all_columns=diagram_detail == "All fields",
-    ),
-    width="stretch",
-)
 
 st.subheader("Known relationships")
 relationship_table = pd.DataFrame(

@@ -17,6 +17,24 @@ def test_keys_relationships_dates_and_money(
     assert set(tables["orders"]["customer_id"]) <= set(tables["customers"]["customer_id"])
     assert set(tables["order_items"]["product_id"]) <= set(tables["products"]["product_id"])
     assert set(tables["order_items"]["seller_id"]) <= set(tables["sellers"]["seller_id"])
+    assert set(tables["seller_products"]["seller_id"]) == set(tables["sellers"]["seller_id"])
+    assert set(tables["seller_products"]["product_id"]) == set(tables["products"]["product_id"])
+
+    listings = tables["seller_products"]
+    assert listings["seller_product_id"].is_unique
+    assert not listings.duplicated(["seller_id", "product_id"]).any()
+    listing_counts = listings.groupby("product_id").size()
+    assert listing_counts.between(1, 4).all()
+
+    resolved_items = tables["order_items"].merge(
+        listings[["seller_product_id", "seller_id", "product_id", "seller_price_usd"]],
+        on="seller_product_id",
+        suffixes=("", "_listing"),
+    )
+    assert len(resolved_items) == len(tables["order_items"])
+    assert resolved_items["seller_id"].eq(resolved_items["seller_id_listing"]).all()
+    assert resolved_items["product_id"].eq(resolved_items["product_id_listing"]).all()
+    assert resolved_items["item_price_usd"].corr(resolved_items["seller_price_usd"]) > 0.9
 
     delivered = tables["orders"].query("order_status == 'delivered'")
     assert (

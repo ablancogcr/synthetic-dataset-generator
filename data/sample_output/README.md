@@ -3,6 +3,9 @@
 This directory contains the complete 10,000-order baseline sample generated with seed 42 and the
 default 2024-01-01 through 2026-12-31 date range.
 
+The package includes `seller_products.csv`, the authoritative many-to-many seller catalog, and
+listing references on every order item.
+
 The data is fully synthetic and is provided only for education, analytics practice, portfolio work,
 SQL modeling, dashboards, and machine-learning experiments. It is not real market or company data.
 

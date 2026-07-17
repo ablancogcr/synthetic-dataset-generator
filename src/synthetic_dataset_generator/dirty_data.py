@@ -22,8 +22,21 @@ PROTECTED_COLUMNS: dict[str, set[str]] = {
     "customers": {"customer_id", "customer_unique_id"},
     "sellers": {"seller_id"},
     "products": {"product_id"},
+    "seller_products": {
+        "seller_product_id",
+        "seller_id",
+        "product_id",
+        "scenario_name",
+    },
     "orders": {"order_id", "customer_id", "scenario_name"},
-    "order_items": {"order_id", "order_item_id", "product_id", "seller_id", "scenario_name"},
+    "order_items": {
+        "order_id",
+        "order_item_id",
+        "seller_product_id",
+        "product_id",
+        "seller_id",
+        "scenario_name",
+    },
     "payments": {"order_id", "payment_sequential", "scenario_name"},
     "shipping": {"order_id", "scenario_name"},
     "reviews": {"review_id", "order_id", "scenario_name"},
@@ -31,6 +44,7 @@ PROTECTED_COLUMNS: dict[str, set[str]] = {
 }
 NEGATIVE_VALUE_COLUMNS = {
     ("products", "product_price_base_usd"),
+    ("seller_products", "seller_price_usd"),
     ("order_items", "item_price_usd"),
     ("order_items", "shipping_cost_usd"),
     ("order_items", "item_total_usd"),

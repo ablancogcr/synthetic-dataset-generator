@@ -41,6 +41,8 @@ class SimulationConfig(BaseModel):
     customer_count: int = Field(default=20_000, gt=0)
     seller_count: int = Field(default=1_200, gt=0)
     product_count: int = Field(default=8_000, gt=0)
+    min_sellers_per_product: int = Field(default=1, gt=0)
+    max_sellers_per_product: int = Field(default=4, gt=0)
     min_items_per_order: int = Field(default=1, gt=0)
     max_items_per_order: int = Field(default=5, gt=0)
     repeat_customer_rate: float = Field(default=0.18, ge=0, le=1)
@@ -49,6 +51,16 @@ class SimulationConfig(BaseModel):
     def validate_item_range(self) -> SimulationConfig:
         if self.max_items_per_order < self.min_items_per_order:
             raise ValueError("max_items_per_order must be at least min_items_per_order")
+        if self.max_sellers_per_product < self.min_sellers_per_product:
+            raise ValueError(
+                "max_sellers_per_product must be at least min_sellers_per_product"
+            )
+        if self.max_sellers_per_product > self.seller_count:
+            raise ValueError("max_sellers_per_product cannot exceed seller_count")
+        if self.product_count * self.max_sellers_per_product < self.seller_count:
+            raise ValueError(
+                "product_count * max_sellers_per_product must be at least seller_count"
+            )
         return self
 
 

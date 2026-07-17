@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from synthetic_dataset_generator.config import GeneratorConfig
 from synthetic_dataset_generator.constants import ORDER_STATUSES, PAYMENT_TYPES, STATE_REGIONS
 from synthetic_dataset_generator.schemas import REQUIRED_FILES, SCHEMA_REGISTRY
 
@@ -76,7 +77,10 @@ def _check(
 
 
 def validate_dataset(
-    tables: dict[str, pd.DataFrame], output_dir: Path | None = None
+    tables: dict[str, pd.DataFrame],
+    output_dir: Path | None = None,
+    *,
+    config: GeneratorConfig | None = None,
 ) -> ValidationResult:
     checks: list[ValidationCheck] = []
     missing_tables = set(SCHEMA_REGISTRY).difference(tables)
@@ -111,6 +115,7 @@ def validate_dataset(
         "customers": ["customer_id"],
         "sellers": ["seller_id"],
         "products": ["product_id"],
+        "seller_products": ["seller_product_id"],
         "orders": ["order_id"],
         "reviews": ["review_id"],
         "calendar": ["date"],
@@ -127,6 +132,14 @@ def validate_dataset(
     fk_rules = [
         ("orders", "customer_id", "customers", "customer_id"),
         ("order_items", "order_id", "orders", "order_id"),
+        ("seller_products", "seller_id", "sellers", "seller_id"),
+        ("seller_products", "product_id", "products", "product_id"),
+        (
+            "order_items",
+            "seller_product_id",
+            "seller_products",
+            "seller_product_id",
+        ),
         ("order_items", "product_id", "products", "product_id"),
         ("order_items", "seller_id", "sellers", "seller_id"),
         ("payments", "order_id", "orders", "order_id"),
@@ -143,9 +156,103 @@ def validate_dataset(
 
     orders = tables["orders"]
     items = tables["order_items"]
+    seller_products = tables["seller_products"]
     payments = tables["payments"]
     shipping = tables["shipping"]
     reviews = tables["reviews"]
+    checks.append(
+        _check(
+            "unique_seller_product_pairs",
+            not seller_products.duplicated(["seller_id", "product_id"]).any(),
+            "Each seller can list a product only once.",
+        )
+    )
+    seller_coverage = set(seller_products["seller_id"]) == set(tables["sellers"]["seller_id"])
+    product_coverage = set(seller_products["product_id"]) == set(tables["products"]["product_id"])
+    checks.append(
+        _check(
+            "seller_product_catalog_coverage",
+            seller_coverage and product_coverage,
+            "Every seller and product has at least one listing.",
+        )
+    )
+    listing_counts = seller_products.groupby("product_id").size()
+    cardinality_valid = True
+    cardinality_details = "Configuration was not supplied; coverage was validated."
+    if config is not None:
+        minimum = config.simulation.min_sellers_per_product
+        maximum = config.simulation.max_sellers_per_product
+        cardinality_valid = bool(listing_counts.between(minimum, maximum).all())
+        cardinality_details = f"Each product has between {minimum} and {maximum} sellers."
+    checks.append(
+        _check(
+            "seller_product_cardinality",
+            cardinality_valid,
+            cardinality_details,
+        )
+    )
+
+    listing_reference = seller_products.set_index("seller_product_id")[["seller_id", "product_id"]]
+    resolved_items = items[["seller_product_id", "seller_id", "product_id"]].join(
+        listing_reference,
+        on="seller_product_id",
+        rsuffix="_listing",
+    )
+    listing_consistent = (
+        resolved_items["seller_id"].eq(resolved_items["seller_id_listing"])
+        & resolved_items["product_id"].eq(resolved_items["product_id_listing"])
+    ).all()
+    checks.append(
+        _check(
+            "order_item_listing_consistency",
+            listing_consistent,
+            "Order-item seller and product identifiers match the referenced listing.",
+        )
+    )
+    checks.append(
+        _check(
+            "one_seller_per_order",
+            items.groupby("order_id")["seller_id"].nunique().le(1).all(),
+            "Every order is fulfilled by one seller.",
+        )
+    )
+
+    listing_seller_state = seller_products[["seller_id", "listing_active_flag"]].merge(
+        tables["sellers"][["seller_id", "seller_active_flag"]],
+        on="seller_id",
+        how="left",
+    )
+    listing_status_valid = listing_seller_state["listing_active_flag"].eq(
+        listing_seller_state["seller_active_flag"]
+    ).all()
+    checks.append(
+        _check(
+            "seller_product_active_status",
+            listing_status_valid,
+            "Listing period-end active flags match their sellers.",
+        )
+    )
+
+    item_purchase_dates = items[["order_id", "seller_product_id"]].merge(
+        orders[["order_id", "order_purchase_timestamp"]], on="order_id", how="left"
+    )
+    item_purchase_dates = item_purchase_dates.merge(
+        seller_products[["seller_product_id", "listing_created_at"]],
+        on="seller_product_id",
+        how="left",
+    )
+    listing_available = (
+        pd.to_datetime(item_purchase_dates["listing_created_at"])
+        <= pd.to_datetime(item_purchase_dates["order_purchase_timestamp"])
+    ).all()
+    checks.append(
+        _check(
+            "seller_product_available_at_purchase",
+            listing_available,
+            "Purchased listings existed when their orders were placed.",
+        )
+    )
+
     checks.append(
         _check(
             "valid_order_statuses",
@@ -182,6 +289,7 @@ def validate_dataset(
     )
     monetary_columns = [
         ("products", "product_price_base_usd"),
+        ("seller_products", "seller_price_usd"),
         ("order_items", "item_price_usd"),
         ("order_items", "shipping_cost_usd"),
         ("order_items", "item_total_usd"),
@@ -212,6 +320,7 @@ def validate_dataset(
         ("sellers", "created_at"),
         ("sellers", "deactivated_at"),
         ("products", "created_at"),
+        ("seller_products", "listing_created_at"),
         ("orders", "order_purchase_timestamp"),
         ("orders", "order_approved_at"),
         ("orders", "order_estimated_delivery_date"),

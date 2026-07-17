@@ -42,6 +42,7 @@ def generate_order_items(
     customers: pd.DataFrame,
     sellers: SellerPopulation,
     products: pd.DataFrame,
+    seller_products: pd.DataFrame,
     product_weights: np.ndarray,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     rng = rng_for(config.dataset.random_seed, "order_items")
@@ -50,11 +51,12 @@ def generate_order_items(
     order_sellers = pd.DataFrame({"order_id": orders["order_id"], "seller_id": seller_ids})
     customer_lookup = customers.set_index("customer_id")
     seller_lookup = sellers.frame.set_index("seller_id")
-    product_categories = products["product_category"].to_numpy()
-    holiday_weights = product_weights.copy()
-    for category, multiplier in scenario.category_multipliers.items():
-        holiday_weights[product_categories == category] *= multiplier
-    holiday_weights /= holiday_weights.sum()
+    product_lookup = products.set_index("product_id")
+    product_weight_lookup = dict(zip(products["product_id"], product_weights, strict=True))
+    listings_by_seller = {
+        str(seller_id): frame.reset_index(drop=True)
+        for seller_id, frame in seller_products.groupby("seller_id", sort=False)
+    }
     item_counts = np.clip(
         rng.geometric(0.58, len(orders)),
         config.simulation.min_items_per_order,
@@ -66,18 +68,26 @@ def generate_order_items(
         seller = seller_lookup.loc[seller_id]
         customer = customer_lookup.loc[order["customer_id"]]
         band = distance_band(str(seller["seller_state"]), str(customer["customer_state"]))
-        product_probabilities = (
-            holiday_weights if bool(order["is_holiday_period"]) else product_weights
+        listings = listings_by_seller[str(seller_id)]
+        product_probabilities = np.array(
+            [product_weight_lookup[str(product_id)] for product_id in listings["product_id"]],
+            dtype=float,
         )
+        if bool(order["is_holiday_period"]):
+            categories = listings["product_id"].map(product_lookup["product_category"])
+            for category, multiplier in scenario.category_multipliers.items():
+                product_probabilities[categories.eq(category).to_numpy()] *= multiplier
+        product_probabilities /= product_probabilities.sum()
         selected = rng.choice(
-            len(products), size=int(item_counts[order_position]), p=product_probabilities
+            len(listings), size=int(item_counts[order_position]), p=product_probabilities
         )
-        for item_sequence, product_index in enumerate(selected, start=1):
-            product = products.iloc[int(product_index)]
+        for item_sequence, listing_index in enumerate(selected, start=1):
+            listing = listings.iloc[int(listing_index)]
+            product = product_lookup.loc[listing["product_id"]]
             price_factor = rng.lognormal(mean=0, sigma=0.10)
             if bool(order["is_promotion_period"]):
                 price_factor *= rng.uniform(0.82, 0.96)
-            price = max(1.0, float(product["product_price_base_usd"]) * price_factor)
+            price = max(1.0, float(listing["seller_price_usd"]) * price_factor)
             volumetric_kg = (
                 float(product["product_length_cm"])
                 * float(product["product_width_cm"])
@@ -96,7 +106,8 @@ def generate_order_items(
                 {
                     "order_id": order["order_id"],
                     "order_item_id": item_sequence,
-                    "product_id": product["product_id"],
+                    "seller_product_id": listing["seller_product_id"],
+                    "product_id": listing["product_id"],
                     "seller_id": seller_id,
                     "item_price_usd": price,
                     "shipping_cost_usd": shipping,
