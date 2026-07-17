@@ -21,6 +21,7 @@ from streamlit_app.utils.metrics import (
     monthly_performance,
     seller_revenue_concentration,
 )
+from streamlit_app.utils.schema_diagram import build_mermaid_er_diagram
 from streamlit_app.utils.validation_loader import load_validation_report
 
 
@@ -143,3 +144,54 @@ def test_validation_loader_handles_markdown_without_json(tmp_path):
     assert report is not None
     assert report.overall_status == "unknown"
     assert report.markdown == "# Summary\n"
+
+
+def test_schema_diagram_marks_keys_and_switches_column_detail():
+    tables = {
+        "customers": pd.DataFrame(
+            {"customer_id": ["customer_1"], "customer_segment": ["occasional_buyer"]}
+        ),
+        "orders": pd.DataFrame(
+            {
+                "order_id": ["order_1"],
+                "customer_id": ["customer_1"],
+                "order_status": ["delivered"],
+            }
+        ),
+        "data_dictionary": pd.DataFrame(
+            {
+                "table_name": ["customers", "orders", "orders"],
+                "column_name": ["customer_id", "order_id", "customer_id"],
+                "data_type": ["string", "string", "string"],
+            }
+        ),
+    }
+    primary_keys = {
+        "customers": "customer_id",
+        "orders": "order_id",
+        "data_dictionary": "table_name + column_name",
+    }
+    relationships = (
+        (
+            "customers.customer_id",
+            "orders.customer_id",
+            "One customer to many orders",
+            "||--o{",
+            "places",
+        ),
+    )
+
+    compact = build_mermaid_er_diagram(
+        tables, primary_keys, relationships, include_all_columns=False
+    )
+    full = build_mermaid_er_diagram(
+        tables, primary_keys, relationships, include_all_columns=True
+    )
+
+    assert "string customer_id PK" in compact
+    assert "string customer_id FK" in compact
+    assert "customers ||--o{ orders : places" in compact
+    assert "customer_segment" not in compact
+    assert "order_status" not in compact
+    assert "customer_segment" in full
+    assert "order_status" in full

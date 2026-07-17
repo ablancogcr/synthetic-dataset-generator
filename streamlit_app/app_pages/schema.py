@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 
 from streamlit_app.utils.data_loader import list_csv_tables
+from streamlit_app.utils.schema_diagram import Relationship, build_mermaid_er_diagram
 from streamlit_app.utils.shared import load_table, page_intro, require_dataset
 
 PRIMARY_KEYS = {
@@ -22,14 +23,56 @@ PRIMARY_KEYS = {
     "data_dictionary": "table_name + column_name",
 }
 
-RELATIONSHIPS = (
-    ("customers.customer_id", "orders.customer_id", "One customer to many orders"),
-    ("orders.order_id", "order_items.order_id", "One order to many items"),
-    ("orders.order_id", "payments.order_id", "One order to one or more payments"),
-    ("orders.order_id", "shipping.order_id", "One order to one shipping row"),
-    ("orders.order_id", "reviews.order_id", "One delivered order to zero or one review"),
-    ("products.product_id", "order_items.product_id", "One product to many items"),
-    ("sellers.seller_id", "order_items.seller_id", "One seller to many items"),
+RELATIONSHIPS: tuple[Relationship, ...] = (
+    (
+        "customers.customer_id",
+        "orders.customer_id",
+        "One customer to many orders",
+        "||--o{",
+        "places",
+    ),
+    (
+        "orders.order_id",
+        "order_items.order_id",
+        "One order to many items",
+        "||--|{",
+        "contains",
+    ),
+    (
+        "orders.order_id",
+        "payments.order_id",
+        "One order to one or more payments",
+        "||--|{",
+        "uses",
+    ),
+    (
+        "orders.order_id",
+        "shipping.order_id",
+        "One order to one shipping row",
+        "||--||",
+        "has",
+    ),
+    (
+        "orders.order_id",
+        "reviews.order_id",
+        "One delivered order to zero or one review",
+        "||--o|",
+        "receives",
+    ),
+    (
+        "products.product_id",
+        "order_items.product_id",
+        "One product to many items",
+        "||--o{",
+        "appears_in",
+    ),
+    (
+        "sellers.seller_id",
+        "order_items.seller_id",
+        "One seller to many items",
+        "||--o{",
+        "fulfills",
+    ),
 )
 
 page_intro(
@@ -83,9 +126,32 @@ if loaded_tables:
     )
     st.dataframe(column_schema, hide_index=True)
 
+st.subheader("Entity relationship diagram")
+diagram_detail = st.segmented_control(
+    "Diagram detail",
+    ("Key fields", "All fields"),
+    default="Key fields",
+    required=True,
+    key="schema_diagram_detail",
+)
+st.caption(
+    "PK marks primary keys and FK marks foreign keys. Calendar, simulation metadata, "
+    "and the data dictionary are standalone reference tables."
+)
+st.mermaid_chart(
+    build_mermaid_er_diagram(
+        loaded_tables,
+        PRIMARY_KEYS,
+        RELATIONSHIPS,
+        include_all_columns=diagram_detail == "All fields",
+    ),
+    width="stretch",
+)
+
 st.subheader("Known relationships")
 relationship_table = pd.DataFrame(
-    RELATIONSHIPS, columns=["primary_key", "foreign_key", "cardinality_note"]
+    [relationship[:3] for relationship in RELATIONSHIPS],
+    columns=["primary_key", "foreign_key", "cardinality_note"],
 )
 st.dataframe(relationship_table, hide_index=True)
 
