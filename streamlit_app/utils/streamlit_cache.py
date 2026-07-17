@@ -40,8 +40,9 @@ def load_validation_cached(
     dataset_dir: str,
     json_modified_time_ns: int | None,
     markdown_modified_time_ns: int | None,
+    manifest_modified_time_ns: int | None,
 ) -> ValidationReport | None:
-    del json_modified_time_ns, markdown_modified_time_ns
+    del json_modified_time_ns, markdown_modified_time_ns, manifest_modified_time_ns
     return load_validation_report(dataset_dir)
 
 

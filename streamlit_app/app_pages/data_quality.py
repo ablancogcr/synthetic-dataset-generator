@@ -16,10 +16,14 @@ page_intro(
 dataset_path = require_dataset()
 json_path = dataset_path / "validation_summary.json"
 markdown_path = dataset_path / "validation_summary.md"
+manifest_path = dataset_path / "dirty_data_manifest.json"
 
 try:
     report = load_validation_cached(
-        str(dataset_path), optional_mtime(json_path), optional_mtime(markdown_path)
+        str(dataset_path),
+        optional_mtime(json_path),
+        optional_mtime(markdown_path),
+        optional_mtime(manifest_path),
     )
 except ValidationLoadError as exc:
     st.error(str(exc))
@@ -35,6 +39,12 @@ if report is None:
 status = report.overall_status.lower()
 if status == "passed":
     st.success("Overall validation status: PASSED", icon=":material/check_circle:")
+elif status == "expected_issues":
+    st.warning(
+        "Overall validation status: EXPECTED ISSUES. The clean source passed validation and "
+        "configured defects were preserved in the exported files.",
+        icon=":material/warning:",
+    )
 elif status == "failed":
     st.error("Overall validation status: FAILED", icon=":material/error:")
 else:
@@ -42,26 +52,38 @@ else:
 
 with st.container(horizontal=True):
     st.metric("Passed checks", f"{report.checks_passed:,}", border=True)
-    st.metric("Failed checks", f"{len(report.failed_checks):,}", border=True)
-    st.metric("Warnings", f"{len(report.warnings):,}", border=True)
+    st.metric("Expected issues", f"{report.checks_expected_issues:,}", border=True)
+    st.metric("Unexpected failures", f"{report.checks_failed:,}", border=True)
     st.metric("Total checks", f"{report.checks_total:,}", border=True)
 
 if report.checks:
     checks = pd.DataFrame(report.checks)
-    if "passed" in checks:
+    if "status" not in checks and "passed" in checks:
         checks.insert(
             1,
             "status",
             checks["passed"].map({True: "Passed", False: "Failed"}).fillna("Unknown"),
         )
+    elif "status" in checks:
+        checks["status"] = checks["status"].astype("string").str.replace("_", " ").str.title()
     preferred = [column for column in ("name", "status", "details") if column in checks]
     remaining = [column for column in checks if column not in preferred and column != "passed"]
     st.subheader("Validation checks")
     st.dataframe(checks[preferred + remaining], hide_index=True)
 
     if report.failed_checks:
-        st.subheader("Failed checks")
+        st.subheader("Unexpected failures")
         st.dataframe(pd.DataFrame(report.failed_checks), hide_index=True)
+
+if report.dirty_manifest:
+    st.subheader("Injected defect counts")
+    st.caption(
+        "The manifest reports counts by defect, table, and column. It does not reveal row IDs, "
+        "cell locations, or the dates removed from transactional data."
+    )
+    defects = report.dirty_manifest.get("defects", [])
+    if isinstance(defects, list) and defects:
+        st.dataframe(pd.DataFrame(defects), hide_index=True)
 
 if report.markdown:
     with st.expander("Human-readable validation summary"):

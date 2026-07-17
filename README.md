@@ -48,6 +48,23 @@ PowerShell accepts the same arguments on one line. Add `--overwrite` to replace 
 with the same scenario, order count, and seed. Use `--scenarios` to select a different scenario YAML
 file.
 
+Add `--dirty` to create a reproducible data-cleaning exercise using the defect rates under
+`data_quality` in `config/default_config.yaml`:
+
+```bash
+uv run synthetic-dataset-generator generate \
+  --config config/default_config.yaml \
+  --output data/output \
+  --scenario baseline \
+  --orders 50000 \
+  --seed 42 \
+  --dirty
+```
+
+Dirty packages use an `_dirty` filename suffix. The same seed, configuration, and generator version
+produce the same missing days, empty orders, nulls, invalid date formats and types, and negative
+values.
+
 The command creates:
 
 ```text
@@ -67,8 +84,14 @@ data_dictionary.csv           validation_summary.json
 validation_summary.md
 ```
 
-The ZIP is created only after every validation check passes. A failed run retains its folder and
-validation reports for diagnosis and returns a nonzero exit code.
+Dirty packages also include `dirty_data_manifest.json`. It reports requested settings and applied
+counts by defect, table, and column, but deliberately omits row IDs, cell locations, and removed
+dates.
+
+Clean ZIPs are created only when every validation check passes. Dirty ZIPs are created when the
+clean source passes and all configured defects survive CSV serialization; their validation status
+is `expected_issues`. Unexpected generator or audit failures retain the folder for diagnosis, omit
+the ZIP, and return a nonzero exit code.
 
 ## Local Streamlit Data Viewer
 
@@ -108,6 +131,22 @@ continue to work without the optional `viewer` extra. See
 
 Scenario parameters are visible in `config/scenarios.yaml`. The general dataset shape is controlled
 by `config/default_config.yaml`, and CLI options override scenario, order count, and seed.
+
+## Dirty-data training mode
+
+Dirty mode is intended for data-quality profiling, ingestion hardening, SQL cleaning exercises, and
+portfolio demonstrations. The default preset introduces null text attributes, missing transaction
+days, inconsistent or malformed dates, text tokens in numeric and boolean fields, negative monetary
+values and review scores, and order headers with no item rows. Primary keys, foreign keys, scenario
+fields, metadata, and the data dictionary are protected.
+
+Cell-level rates are applied independently to non-overlapping field groups. Any positive rate affects
+at least one eligible value without exceeding the available population. Missing days remove the
+orders and dependent facts for selected active dates while retaining the matching calendar rows.
+Empty orders retain their headers, payments, and shipping records but lose every order-item row.
+
+`data_dictionary.csv` continues to describe the intended clean schema. Dirty values violate that
+schema by design and are not silently repaired by the generator or local viewer.
 
 ## Portfolio uses
 

@@ -22,3 +22,10 @@ the code and validators. It lists table, column, logical type, description, exam
 CSV timestamps use ISO-style values; nullable values are empty fields. Monetary fields are synthetic
 USD-like values rounded to two decimals. Identifiers are generic and carry no real-world meaning.
 
+`simulation_metadata.csv` records both `requested_number_of_orders` and the final
+`number_of_orders`, plus `data_quality_mode`. These counts differ when dirty mode removes complete
+transaction days.
+
+The dictionary always describes the intended clean logical schema. In dirty mode, selected exported
+values deliberately violate the documented nullability, format, type, range, or relationship rules;
+the dictionary itself is not corrupted.

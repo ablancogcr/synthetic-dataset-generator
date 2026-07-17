@@ -32,11 +32,13 @@ def generate_metadata(config: GeneratorConfig, tables: dict[str, pd.DataFrame]) 
         "generated_at": generated_at,
         "start_date": config.dataset.start_date,
         "end_date": config.dataset.end_date,
+        "requested_number_of_orders": config.dataset.number_of_orders,
         "number_of_orders": len(tables["orders"]),
         "number_of_customers": len(tables["customers"]),
         "number_of_sellers": len(tables["sellers"]),
         "number_of_products": len(tables["products"]),
         "currency": config.business_rules.currency,
+        "data_quality_mode": config.data_quality.mode,
         "disclaimer": DISCLAIMER,
     }
     return pd.DataFrame([row], columns=columns_for("simulation_metadata"))

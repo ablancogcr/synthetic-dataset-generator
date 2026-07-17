@@ -17,27 +17,62 @@ class ValidationCheck:
     name: str
     passed: bool
     details: str
+    expected: bool = False
+
+    @property
+    def status(self) -> str:
+        if self.passed:
+            return "passed"
+        return "expected_issue" if self.expected else "failed"
+
+    def to_dict(self) -> dict[str, object]:
+        payload = asdict(self)
+        payload["status"] = self.status
+        return payload
 
 
 @dataclass
 class ValidationResult:
     checks: list[ValidationCheck]
+    source_integrity_status: str | None = None
+
+    @property
+    def expected_issues(self) -> list[ValidationCheck]:
+        return [check for check in self.checks if not check.passed and check.expected]
+
+    @property
+    def unexpected_failures(self) -> list[ValidationCheck]:
+        return [check for check in self.checks if not check.passed and not check.expected]
 
     @property
     def passed(self) -> bool:
-        return all(check.passed for check in self.checks)
+        return not self.unexpected_failures
+
+    @property
+    def overall_status(self) -> str:
+        if self.unexpected_failures:
+            return "failed"
+        if self.expected_issues:
+            return "expected_issues"
+        return "passed"
 
     def to_dict(self) -> dict[str, object]:
         return {
-            "overall_status": "passed" if self.passed else "failed",
+            "overall_status": self.overall_status,
+            "source_integrity_status": self.source_integrity_status
+            or ("passed" if self.passed else "failed"),
             "checks_passed": sum(check.passed for check in self.checks),
+            "checks_expected_issues": len(self.expected_issues),
+            "checks_failed": len(self.unexpected_failures),
             "checks_total": len(self.checks),
-            "checks": [asdict(check) for check in self.checks],
+            "checks": [check.to_dict() for check in self.checks],
         }
 
 
-def _check(name: str, passed: bool, details: str) -> ValidationCheck:
-    return ValidationCheck(name=name, passed=bool(passed), details=details)
+def _check(
+    name: str, passed: bool, details: str, *, expected: bool = False
+) -> ValidationCheck:
+    return ValidationCheck(name=name, passed=bool(passed), details=details, expected=expected)
 
 
 def validate_dataset(

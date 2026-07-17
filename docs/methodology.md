@@ -46,13 +46,31 @@ driven by delay, seller quality, shipping burden, holiday pressure, and scenario
 
 The numeric multipliers are configuration, not hidden code, in `config/scenarios.yaml`.
 
+## Dirty-data logic
+
+Dirty mode runs only after the normal in-memory dataset passes clean-source validation. Each defect
+category uses a stable random namespace derived from the root seed, and field groups do not overlap,
+so changing one defect rate does not move the other categories' targets.
+
+Structural defects are applied first. Missing-day selection removes the chosen dates' orders and all
+dependent item, payment, shipping, and review rows while keeping the dates in `calendar.csv`. Empty
+orders retain their order, payment, and shipping rows but lose their item rows. Cell defects then add
+null text attributes, inconsistent or malformed date strings, non-parsable numeric/boolean tokens,
+and negative prices, costs, payment values, and review scores. Derived values are not recalculated,
+because the resulting inconsistencies are part of the exercise.
+
+The public dirty-data manifest contains counts only. Private in-memory targets are retained just long
+enough to verify that each intended defect survived CSV serialization; exact locations are not
+written to disk.
+
 ## Validation and limitations
 
 Validation covers schemas, files, keys, relationships, categories, states, money, date ordering,
 payment and shipping reconciliation, review eligibility, scenario fields, and seller churn cutoffs.
+Dirty runs report those deliberate violations as expected issues while reserving failed status for a
+bad clean source, incomplete injection, missing output, or serialization mismatch.
 
 The data is deliberately plausible rather than a statistical replica of the US ecommerce market.
 Cities and state weights are simplified; taxes, returns, refunds, inventory, multi-seller shipments,
 addresses, and many operational edge cases are outside the MVP. Results must not be interpreted as
 real market evidence.
-

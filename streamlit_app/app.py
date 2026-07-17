@@ -98,6 +98,8 @@ with st.sidebar:
         st.caption("Random seed")
         seed = metadata.get("random_seed")
         st.write(str(int(seed)) if seed is not None else "Not available")
+        st.caption("Data quality mode")
+        st.write(metadata.get("data_quality_mode") or "clean")
         st.caption("Available tables")
         st.write(", ".join(selected.available_tables))
     else:

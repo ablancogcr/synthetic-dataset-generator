@@ -38,3 +38,15 @@ useful for checking whether a model recovers expected relationships.
 Always label portfolio outputs as synthetic. Do not describe results as real US ecommerce findings or
 use them for operational decisions.
 
+## Data-cleaning exercises
+
+Generate with `--dirty` to practice profiling and remediation. Start by loading
+`data_dictionary.csv` as the intended contract, then identify missing values, time-series gaps,
+malformed dates, type-conversion failures, invalid negative values, and order headers without items.
+Use `validation_summary.json` to distinguish expected training issues from unexpected generator
+failures.
+
+`dirty_data_manifest.json` reveals only aggregate counts by defect, table, and column. It does not
+identify the affected rows or removed dates, so it can support grading and completeness checks without
+turning the exercise into a cell-by-cell answer key. Keep transformations in a separate cleaned layer
+instead of overwriting the generated source files.

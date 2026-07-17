@@ -28,3 +28,11 @@ business_rules:
   allow_late_deliveries: true
   allow_missing_reviews: true
 
+data_quality:
+  mode: "clean"
+  null_rate: 0.01
+  missing_day_rate: 0.005
+  incorrect_date_format_rate: 0.005
+  invalid_type_rate: 0.002
+  negative_value_rate: 0.002
+  empty_order_rate: 0.002

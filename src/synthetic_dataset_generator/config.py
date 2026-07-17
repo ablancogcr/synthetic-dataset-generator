@@ -10,6 +10,7 @@ import yaml
 from pydantic import BaseModel, Field, model_validator
 
 ScenarioName = Literal["baseline", "holiday_spike", "logistics_improvement", "seller_churn"]
+DataQualityMode = Literal["clean", "dirty"]
 
 
 class DatasetConfig(BaseModel):
@@ -58,11 +59,22 @@ class BusinessRulesConfig(BaseModel):
     allow_missing_reviews: bool = True
 
 
+class DataQualityConfig(BaseModel):
+    mode: DataQualityMode = "clean"
+    null_rate: float = Field(default=0.01, ge=0, le=1)
+    missing_day_rate: float = Field(default=0.005, ge=0, le=1)
+    incorrect_date_format_rate: float = Field(default=0.005, ge=0, le=1)
+    invalid_type_rate: float = Field(default=0.002, ge=0, le=1)
+    negative_value_rate: float = Field(default=0.002, ge=0, le=1)
+    empty_order_rate: float = Field(default=0.002, ge=0, le=1)
+
+
 class GeneratorConfig(BaseModel):
     dataset: DatasetConfig = Field(default_factory=DatasetConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)
     simulation: SimulationConfig = Field(default_factory=SimulationConfig)
     business_rules: BusinessRulesConfig = Field(default_factory=BusinessRulesConfig)
+    data_quality: DataQualityConfig = Field(default_factory=DataQualityConfig)
 
 
 class ScenarioConfig(BaseModel):
@@ -105,6 +117,7 @@ def apply_overrides(
     scenario: str | None = None,
     orders: int | None = None,
     seed: int | None = None,
+    dirty: bool | None = None,
 ) -> GeneratorConfig:
     """Return a validated config with CLI values taking precedence."""
     values = config.model_dump()
@@ -114,4 +127,6 @@ def apply_overrides(
         values["dataset"]["number_of_orders"] = orders
     if seed is not None:
         values["dataset"]["random_seed"] = seed
+    if dirty is not None:
+        values["data_quality"]["mode"] = "dirty" if dirty else "clean"
     return GeneratorConfig.model_validate(values)

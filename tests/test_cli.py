@@ -40,3 +40,32 @@ def test_cli_exports_zip_and_handles_collision(
     assert archive.is_file()
     assert main(args) == 2
     assert main([*args, "--overwrite"]) == 0
+
+
+def test_cli_dirty_shortcut_creates_expected_issue_package(
+    tmp_path, capsys, config_factory: Callable[..., GeneratorConfig]
+) -> None:
+    config = config_factory(orders=120)
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(yaml.safe_dump(config.model_dump(mode="json")), encoding="utf-8")
+    output = tmp_path / "output"
+
+    exit_code = main(
+        [
+            "generate",
+            "--config",
+            str(config_path),
+            "--scenarios",
+            "config/scenarios.yaml",
+            "--output",
+            str(output),
+            "--dirty",
+        ]
+    )
+
+    output_text = capsys.readouterr().out
+    assert exit_code == 0
+    assert "Data quality mode: dirty" in output_text
+    assert "Validation: EXPECTED_ISSUES" in output_text
+    assert (output / "ecommerce_baseline_120_seed42_dirty").is_dir()
+    assert (output / "ecommerce_baseline_120_seed42_dirty.zip").is_file()

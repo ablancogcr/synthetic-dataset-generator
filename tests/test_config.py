@@ -11,6 +11,8 @@ def test_default_config_loads() -> None:
     assert config.dataset.number_of_orders == 50_000
     assert config.simulation.scenario == "baseline"
     assert config.dataset.start_date.isoformat() == "2024-01-01"
+    assert config.data_quality.mode == "clean"
+    assert config.data_quality.null_rate == 0.01
 
 
 def test_cli_overrides_take_precedence() -> None:
@@ -21,6 +23,9 @@ def test_cli_overrides_take_precedence() -> None:
     assert config.dataset.number_of_orders == 75
     assert config.dataset.random_seed == 7
 
+    dirty = apply_overrides(config, dirty=True)
+    assert dirty.data_quality.mode == "dirty"
+
 
 @pytest.mark.parametrize(
     "values",
@@ -29,6 +34,8 @@ def test_cli_overrides_take_precedence() -> None:
         {"dataset": {"number_of_orders": 0}},
         {"simulation": {"min_items_per_order": 5, "max_items_per_order": 2}},
         {"simulation": {"scenario": "unknown"}},
+        {"data_quality": {"null_rate": -0.1}},
+        {"data_quality": {"empty_order_rate": 1.1}},
     ],
 )
 def test_invalid_config_is_rejected(values: dict[str, object]) -> None:

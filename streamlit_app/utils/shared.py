@@ -69,6 +69,14 @@ def load_tables(
 def page_intro(title: str, description: str) -> None:
     st.title(title)
     st.caption(description)
+    metadata = st.session_state.get("dataset_metadata", {})
+    if metadata.get("data_quality_mode") == "dirty":
+        st.warning(
+            "This is an intentionally dirty training dataset. Viewer metrics can exclude or "
+            "coerce invalid cells for display; use Data explorer to inspect the unchanged CSV "
+            "values.",
+            icon=":material/warning:",
+        )
 
 
 def show_disclaimer() -> None:

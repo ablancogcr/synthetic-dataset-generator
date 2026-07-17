@@ -34,6 +34,12 @@ def build_parser() -> argparse.ArgumentParser:
     generate.add_argument("--orders", type=int, help="Override generated order count.")
     generate.add_argument("--seed", type=int, help="Override random seed.")
     generate.add_argument(
+        "--dirty",
+        action="store_true",
+        default=None,
+        help="Enable deterministic dirty-data generation using configured rates.",
+    )
+    generate.add_argument(
         "--overwrite", action="store_true", help="Replace the named output package."
     )
     return parser
@@ -50,6 +56,7 @@ def run_generate(args: argparse.Namespace) -> int:
         scenario=args.scenario,
         orders=args.orders,
         seed=args.seed,
+        dirty=args.dirty,
     )
     scenarios = load_scenarios(Path(args.scenarios))
     scenario = scenarios[config.simulation.scenario]
@@ -58,6 +65,7 @@ def run_generate(args: argparse.Namespace) -> int:
     print(f"  Orders: {config.dataset.number_of_orders:,}")
     print(f"  Date range: {config.dataset.start_date} to {config.dataset.end_date}")
     print(f"  Random seed: {config.dataset.random_seed}")
+    print(f"  Data quality mode: {config.data_quality.mode}")
     print(f"  Output root: {Path(args.output)}")
     print("Generating dataset tables...")
 
@@ -76,7 +84,7 @@ def run_generate(args: argparse.Namespace) -> int:
     print(f"  Dataset folder: {result.output_dir}")
     if result.zip_path is not None:
         print(f"  ZIP package: {result.zip_path}")
-    print(f"  Validation: {'PASSED' if result.validation.passed else 'FAILED'}")
+    print(f"  Validation: {result.validation.overall_status.upper()}")
     return 0 if result.validation.passed else 1
 
 

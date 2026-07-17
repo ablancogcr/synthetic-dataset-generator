@@ -47,7 +47,7 @@ names. Directories that contain generator artifacts but lack a core table are li
 ZIP files are not opened; select their extracted dataset directory instead.
 
 `simulation_metadata.csv`, when present, supplies the sidebar scenario, configured order count,
-date range, and random seed. The viewer does not infer these values from a directory name when
+date range, random seed, and data-quality mode. The viewer does not infer these values from a directory name when
 metadata exists.
 
 ## Pages
@@ -60,8 +60,9 @@ metadata exists.
   customer geography, and payment records.
 - **Shipping and reviews** compares delivery performance across distance bands and shows observed
   review/delivery relationships without making causal claims.
-- **Data quality** renders the generator's existing JSON and Markdown validation summaries. It does
-  not create a separate validation engine.
+- **Data quality** renders the generator's existing JSON and Markdown validation summaries,
+  distinguishes expected dirty issues from unexpected failures, and displays counts from the dirty
+  manifest. It does not create a separate validation engine.
 - **Schema** reports table dimensions, pandas data types, documented primary keys, foreign-key
   relationships, and `data_dictionary.csv` content.
 
@@ -90,10 +91,15 @@ The viewer can list every CSV it finds. Full coverage uses the generator's stand
 `customers.csv`, `sellers.csv`, `products.csv`, `orders.csv`, `order_items.csv`, `payments.csv`,
 `shipping.csv`, `reviews.csv`, `calendar.csv`, `simulation_metadata.csv`, and
 `data_dictionary.csv`, plus `validation_summary.json` and `validation_summary.md`.
+Dirty packages additionally include `dirty_data_manifest.json`.
 
 Missing optional files disable only the affected metadata, chart, validation, or dictionary view.
 Missing core files make a directory incomplete and prevent selection. CSV parsing and validation
 JSON errors are reported in the UI with the failing filename.
+
+Dirty packages display a warning on every page. The viewer never writes back to a source CSV. Some
+analytical metrics defensively coerce invalid numeric or date cells and may exclude them from a chart;
+use Data explorer to inspect the unchanged raw values.
 
 ## Adding a view
 

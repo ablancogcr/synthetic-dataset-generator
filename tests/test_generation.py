@@ -21,6 +21,10 @@ def test_generation_produces_declared_tables(
     assert len(dataset.tables["shipping"]) == 180
     assert len(dataset.tables["order_items"]) >= 180
     assert len(dataset.tables["calendar"]) == 1096
+    metadata = dataset.tables["simulation_metadata"].iloc[0]
+    assert metadata["requested_number_of_orders"] == 180
+    assert metadata["number_of_orders"] == 180
+    assert metadata["data_quality_mode"] == "clean"
 
 
 def test_fixed_seed_reproduces_analytical_tables(

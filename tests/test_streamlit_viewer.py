@@ -136,6 +136,71 @@ def test_validation_loader_reads_generator_report_and_markdown(tmp_path):
     assert report.markdown == "# Validation Summary\n"
 
 
+def test_validation_loader_classifies_expected_issues_and_reads_manifest(tmp_path):
+    payload = {
+        "overall_status": "expected_issues",
+        "checks_passed": 1,
+        "checks_expected_issues": 1,
+        "checks_failed": 0,
+        "checks_total": 2,
+        "checks": [
+            {"name": "source_schema", "passed": True, "status": "passed", "details": "OK"},
+            {
+                "name": "dirty_null_values",
+                "passed": False,
+                "expected": True,
+                "status": "expected_issue",
+                "details": "Found 5",
+            },
+        ],
+    }
+    manifest = {
+        "data_quality_mode": "dirty",
+        "defects": [
+            {
+                "defect_type": "null_values",
+                "table": "orders",
+                "column": "order_status",
+                "affected_count": 5,
+            }
+        ],
+    }
+    (tmp_path / "validation_summary.json").write_text(json.dumps(payload), encoding="utf-8")
+    (tmp_path / "dirty_data_manifest.json").write_text(
+        json.dumps(manifest), encoding="utf-8"
+    )
+
+    report = load_validation_report(tmp_path)
+
+    assert report is not None
+    assert report.overall_status == "expected_issues"
+    assert len(report.expected_issue_checks) == 1
+    assert report.failed_checks == ()
+    assert report.dirty_manifest == manifest
+
+
+def test_viewer_metrics_tolerate_dirty_numeric_and_date_values():
+    orders = pd.DataFrame(
+        {
+            "order_id": ["order_1", "order_2"],
+            "order_purchase_timestamp": ["2026-01-05", "invalid_date"],
+        }
+    )
+    order_items = pd.DataFrame(
+        {
+            "order_id": ["order_1", "order_2"],
+            "item_price_usd": ["10.0", "not_a_number"],
+            "shipping_cost_usd": ["2.0", "not_a_number"],
+            "item_total_usd": ["12.0", "not_a_number"],
+        }
+    )
+
+    monthly = monthly_performance(orders, order_items)
+
+    assert len(monthly) == 1
+    assert monthly.loc[0, "total_order_value"] == 12.0
+
+
 def test_validation_loader_handles_markdown_without_json(tmp_path):
     (tmp_path / "validation_summary.md").write_text("# Summary\n", encoding="utf-8")
 

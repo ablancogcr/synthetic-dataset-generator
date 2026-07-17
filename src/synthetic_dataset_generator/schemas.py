@@ -139,11 +139,13 @@ SCHEMA_REGISTRY: dict[str, dict[str, ColumnSpec]] = {
         "generated_at": _spec("datetime", "UTC generation timestamp."),
         "start_date": _spec("date", "Configured period start."),
         "end_date": _spec("date", "Configured period end."),
+        "requested_number_of_orders": _spec("integer", "Configured order count before defects."),
         "number_of_orders": _spec("integer", "Generated order count."),
         "number_of_customers": _spec("integer", "Generated customer count."),
         "number_of_sellers": _spec("integer", "Generated seller count."),
         "number_of_products": _spec("integer", "Generated product count."),
         "currency": _spec("string", "Synthetic monetary unit."),
+        "data_quality_mode": _spec("string", "Whether the output is clean or intentionally dirty."),
         "disclaimer": _spec("string", "Synthetic-data usage disclaimer."),
     },
     "data_dictionary": {
